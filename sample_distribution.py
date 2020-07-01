@@ -7,6 +7,7 @@ import os
 import argparse
 import random
 import numpy as np
+np.seterr(divide='ignore', invalid='ignore')  # fix runtime error when dividing by zero
 
 # Read in options.
 parser = argparse.ArgumentParser()
@@ -39,7 +40,7 @@ def generate():
             keys.append(vals[0])
             vectors[vals[0]] = [float(x) for x in vals[1:]]
         vector_dim = len(vals) - 1  # Number of features in a semantic vector, minus the index word at the beginning.
-        vector_vocab_size = len(words)
+        vector_vocab_size = len(keys)
 
     # Create word:number dictionary from the keys list, to be used for vector lookups.
     vector_vocab = {w: idx for idx, w in enumerate(keys)}
@@ -60,10 +61,10 @@ def generate():
 
 
 def get_random_pair(words, sample_range):
-    random_index = randrange(sample_range)
+    random_index = random.randrange(sample_range)
     print(f'Index 1 is {random_index}.')
     word1 = words[random_index]
-    random_index = randrange(sample_range)
+    random_index = random.randrange(sample_range)
     print(f'Index 1 is {random_index}.')
     word2 = words[random_index]
     return word1, word2
@@ -80,3 +81,4 @@ if __name__ == "__main__":
     
     # Randomly select word pairs for scoring until the specified sample count is reached.
     word1, word2 = get_random_pair(words, sample_range)
+    print(word1, word2)
