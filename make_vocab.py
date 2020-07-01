@@ -4,7 +4,7 @@
 # Vectors must contain the vocabulary word as the first element, followed by
 # any number of space-separated feature values.
 # The script will ignore all strings not comprised of lowercase English
-# alphabetic characters. To output all strings regardless of composition,
+# alphabet characters. To output all strings regardless of composition,
 # change the main function to use the "make_vocab" function.
 
 import argparse
@@ -21,6 +21,7 @@ SUFFIX = ".txt"
 
 
 def make_vocab():
+"""Write out the first string from each line of the input file, regardless of composition."""
     vals = []
     with open(args.vectors_file, 'r') as f, open(args.output_file, 'w') as o:
         for line in f:
@@ -30,6 +31,8 @@ def make_vocab():
 
 
 def make_vocab_lower_alphas():
+"""Check the first string from each line of the input file, and if it contains
+only lowercase English alphabet characters, write it out."""
     vals = []
     with open(args.vectors_file, 'r') as f, open(args.output_file, 'w') as o:
         for line in f:
