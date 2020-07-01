@@ -92,11 +92,12 @@ if __name__ == '__main__':
     scores_sorted = sort_scores(scores_all)
     assert len(scores_all) == len(scores_sorted)
     scores_array = make_array(scores_sorted)
-    assert (scores_array.shape)[0] == len(scores_sorted)
+    # assert (scores_array.shape)[0] == len(scores_sorted)
+    print(f'Shape of scores_array is {scores_array.shape}.')
     scores_norm = normalize_array(scores_array)
-    assert scores_array.shape[0] == scores_norm.shape[0]
+    # assert scores_array.shape[0] == scores_norm.shape[0]
     scores_trimmed = trim_scores(scores_norm)
-    print(f'After removing scores = 1, there are {scores_trimmed.shape[0]} scores.')
+    print(f'After removing scores == 1, there are {scores_trimmed.shape[0]} scores.')
     
     # Calculate statistics of the distribution.
     mu, sigma, a_min, a_max = calculate_statistics(scores_trimmed)
