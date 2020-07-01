@@ -50,7 +50,7 @@ def generate():
     for word, v in vectors.items():
         if word == '<unk>':
             continue
-        W[vocab[word], :] = v
+        W[vector_vocab[word], :] = v
 
     # Normalize each word vector to unit variance.
     W_norm = np.zeros(W.shape)
@@ -59,9 +59,24 @@ def generate():
     return (W_norm, vector_vocab)
 
 
+def get_random_pair(words, sample_range):
+    random_index = randrange(sample_range)
+    print(f'Index 1 is {random_index}.')
+    word1 = words[random_index]
+    random_index = randrange(sample_range)
+    print(f'Index 1 is {random_index}.')
+    word2 = words[random_index]
+    return word1, word2
+
+
 if __name__ == "__main__":
     # Read in the vocab file.
     words = read_vocab()
-    print(len(words))
+    sample_range = len(words)
+    print(f'The sample range is 0 to {sample_range - 1}.')
+
+    # Generate the vector lookup references.
+    W, vector_vocab = generate()
     
     # Randomly select word pairs for scoring until the specified sample count is reached.
+    word1, word2 = get_random_pair(words, sample_range)
