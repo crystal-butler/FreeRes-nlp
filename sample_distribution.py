@@ -62,16 +62,14 @@ def generate():
 
 def get_random_pair(words, sample_range):
     random_index = random.randrange(sample_range)
-    print(f'Index 1 is {random_index}.')
     word1 = words[random_index]
     random_index = random.randrange(sample_range)
-    print(f'Index 1 is {random_index}.')
     word2 = words[random_index]
     return word1, word2
 
 
 def distance(W, vector_vocab, word1, word2):
-    if word1 not in vocab or word2 not in vector_vocab:
+    if word1 not in vector_vocab or word2 not in vector_vocab:
         # Magic number to indicate that some word wasn't in the vocabulary.
         return -100
 
@@ -85,7 +83,6 @@ if __name__ == "__main__":
     # Read in the vocab file.
     words = read_vocab()
     sample_range = len(words)
-    print(f'The sample range is 0 to {sample_range - 1}.')
 
     # Generate the vector lookup references.
     W, vector_vocab = generate()
@@ -94,6 +91,6 @@ if __name__ == "__main__":
     with open(args.scores_file, 'w') as f:
         for i in range(args.sample_count):
             word1, word2 = get_random_pair(words, sample_range)
-            print(word1, word2)
             score = distance(W, vector_vocab, word1, word2)
-            print(score)
+            if score != -100:
+                f.write("%s\n" % (score))
