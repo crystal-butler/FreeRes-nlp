@@ -7,6 +7,7 @@ import os
 import argparse
 import random
 import numpy as np
+np.seterr(divide='ignore', invalid='ignore')  # fix runtime error when dividing by zero
 
 # Read in options.
 parser = argparse.ArgumentParser()
@@ -39,7 +40,7 @@ def generate():
             keys.append(vals[0])
             vectors[vals[0]] = [float(x) for x in vals[1:]]
         vector_dim = len(vals) - 1  # Number of features in a semantic vector, minus the index word at the beginning.
-        vector_vocab_size = len(words)
+        vector_vocab_size = len(keys)
 
     # Create word:number dictionary from the keys list, to be used for vector lookups.
     vector_vocab = {w: idx for idx, w in enumerate(keys)}
@@ -60,23 +61,36 @@ def generate():
 
 
 def get_random_pair(words, sample_range):
-    random_index = randrange(sample_range)
-    print(f'Index 1 is {random_index}.')
+    random_index = random.randrange(sample_range)
     word1 = words[random_index]
-    random_index = randrange(sample_range)
-    print(f'Index 1 is {random_index}.')
+    random_index = random.randrange(sample_range)
     word2 = words[random_index]
     return word1, word2
+
+
+def distance(W, vector_vocab, word1, word2):
+    if word1 not in vector_vocab or word2 not in vector_vocab:
+        # Magic number to indicate that some word wasn't in the vocabulary.
+        return -100
+
+    # Cosine similarity is calculated as (vector1 • vector2) / (\\vector1\\ * \\vector2\\). But the magnitudes of
+    # our vectors have all been normalized to 1, so this reduces to a vector dot product.
+    distance = np.dot(W[vector_vocab[word1]], W[vector_vocab[word2]])
+    return distance
 
 
 if __name__ == "__main__":
     # Read in the vocab file.
     words = read_vocab()
     sample_range = len(words)
-    print(f'The sample range is 0 to {sample_range - 1}.')
 
     # Generate the vector lookup references.
     W, vector_vocab = generate()
     
     # Randomly select word pairs for scoring until the specified sample count is reached.
-    word1, word2 = get_random_pair(words, sample_range)
+    with open(args.scores_file, 'w') as f:
+        for i in range(args.sample_count):
+            word1, word2 = get_random_pair(words, sample_range)
+            score = distance(W, vector_vocab, word1, word2)
+            if score != -100:
+                f.write("%s\n" % (score))
