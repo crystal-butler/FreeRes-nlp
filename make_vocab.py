@@ -3,8 +3,12 @@
 # Generate and save a vocabulary file for a given list of word-feature vectors.
 # Vectors must contain the vocabulary word as the first element, followed by
 # any number of space-separated feature values.
+# The script will ignore all strings not comprised of lowercase English
+# alphabetic characters. To output all strings regardless of composition,
+# change the main function to use the "make_vocab" function.
 
 import argparse
+import re
 
 # Read in options.
 parser = argparse.ArgumentParser()
@@ -25,5 +29,17 @@ def make_vocab():
         return 0
 
 
+def make_vocab_lower_alphas():
+    vals = []
+    with open(args.vectors_file, 'r') as f, open(args.output_file, 'w') as o:
+        for line in f:
+            vals = line.rstrip().split(' ')
+            if re.search(r'[^a-z]', vals[0]):
+                continue
+            else:
+                o.write("{}\n".format(vals[0]))
+        return 0
+
+
 if __name__ == "__main__":
-    vocab = make_vocab()
+    vocab = make_vocab_lower_alphas()
