@@ -1,55 +1,67 @@
 # Crystal Butler
-# 2019/03/01
-# Pre-process free response label lists for input into the relatedness scoring script, word_pair_distance.py.
-# To generate single files of labels per stimulus ID and a file listing all IDs (for use in the MATLAB clustering
-# script), use the optional --ID_label_file flag, providing it with a single file comprising IDs and labels,
-# listed in comma-separated pairs, one per line.
-# This would look like:
-# 3, happy
-# 3, enthusiastic
-# 5, depressed
-# ...
-# Any line with the string "NA" (without quotes) will be dropped.
-#
-# The required arguments are for a directory containing files of label lists, with one label per line,
-# and one file per stiumulus ID; then a directory where label pair files will be output, with one space-separated
-# label pair per line and one set of all-pairs per ID in a file. The generate_all_pairs function will keep
-# duplicate labels, and will pair them as with any other label. This design allows for accurate weighting of
-# labels in word_pair_distance.py, which calculates relatedness scores for all pairs as a precursor to
-# the weighting and clustering steps in the free response label processing pipeline.
+# 2020/07/01
+# Generate a distribution of synonymy scores for a vocabulary by
+# randomly sampling word pairs.
 
 import os
 import argparse
+import random
+import numpy as np
 
 # Read in options.
 parser = argparse.ArgumentParser()
-parser.add_argument('vocab_dir', help='directory where individual word lists by ID are stored', type=str)
-parser.add_argument('wordpairs_dir', help='directory in which to store word pair lists after processing wordlists_dir',
-                    type=str)
-parser.add_argument('--ID_label_file', help='optional file of <ID, label> pairs, to be split into individual files',
-                    default=None, type=str)
+parser.add_argument('vocab_file', help='path to file of vocabulary words, one per line', type=str)
+parser.add_argument('scores_file', help='path to file in which to store word pair scores', type=str)
+parser.add_argument('vectors_file', help='path to the word embeddings file used to calculate synonymy scores', type=str)
+parser.add_argument('sample_count', help='number of sample word pairs to score', type=int)
 args = parser.parse_args()
 
 
-# Create files of all pairs of labels per ID from a directory of label lists, with one space-separated pair per line.
-def generate_all_pairs():
-    read_directory = os.fsencode(args.wordlists_dir)
-    for file in os.listdir(read_directory):
-        filename = os.fsdecode(file)
-        if filename.startswith('.'):
+def read_vocab():
+    with open(args.vocab_file, 'r') as f:
+        words = [x.rstrip().split(' ')[0] for x in f.readlines()]
+    return words
+
+
+def generate():
+    # Semantic vectors (or word embeddings) are the result of training a ML model to represent word relatedness.
+    with open(args.vectors_file, 'r') as f:
+        # The pre-trained semantic vectors will go into a Python dictionary.
+        # Dictionaries are key:value indexed; lookup is done via hash function and should be O(1) time complexity.
+        # But the dictionary is just an intermediate. Lookups will be done against a numpy ndarray, constructed later.
+        vectors = {}
+        # The "words" list is an intermediate. The dictionary used in processing is constructed later.
+        keys = []
+        vals = []
+        for line in f:
+            vals = line.rstrip().split(' ')
+            # Turn semantic vectors into key-value pairs, indexed by lookup word.
+            keys.append(vals[0])
+            vectors[vals[0]] = [float(x) for x in vals[1:]]
+        vector_dim = len(vals) - 1  # Number of features in a semantic vector, minus the index word at the beginning.
+        vector_vocab_size = len(words)
+
+    # Create word:number dictionary from the keys list, to be used for vector lookups.
+    vector_vocab = {w: idx for idx, w in enumerate(keys)}
+
+    # Create a numpy ndarray of semantic vectors. The ndarray is indexed by row number, while we need to index by word.
+    # But we'll be using the O(1) lookup time from our vocab dictionary to translate from input word to row number.
+    W = np.zeros((vector_vocab_size, vector_dim))
+    for word, v in vectors.items():
+        if word == '<unk>':
             continue
-        ID = filename.split("_")[0]
-        in_file = os.path.join(args.wordlists_dir, filename)
-        out_file = os.path.join(args.wordpairs_dir, ID + "_pairs" + SUFFIX)
-        with open(in_file, 'r') as f:
-            label_list = [line.rstrip('\n') for line in f]
-            with open(out_file, 'w') as o:
-                for i in range(len(label_list)):
-                    for j in range(i + 1, (len(label_list))):
-                        o.write("{} {}\n".format(label_list[i], label_list[j]))
+        W[vocab[word], :] = v
+
+    # Normalize each word vector to unit variance.
+    W_norm = np.zeros(W.shape)
+    d = (np.sum(W ** 2, 1) ** (0.5))
+    W_norm = (W.T / d).T
+    return (W_norm, vector_vocab)
 
 
 if __name__ == "__main__":
-    if (args.ID_label_file is not None):
-        split_ID_labels()
-    generate_all_pairs()
+    # Read in the vocab file.
+    words = read_vocab()
+    print(len(words))
+    
+    # Randomly select word pairs for scoring until the specified sample count is reached.
