@@ -70,6 +70,17 @@ def get_random_pair(words, sample_range):
     return word1, word2
 
 
+def distance(W, vector_vocab, word1, word2):
+    if word1 not in vocab or word2 not in vector_vocab:
+        # Magic number to indicate that some word wasn't in the vocabulary.
+        return -100
+
+    # Cosine similarity is calculated as (vector1 • vector2) / (\\vector1\\ * \\vector2\\). But the magnitudes of
+    # our vectors have all been normalized to 1, so this reduces to a vector dot product.
+    distance = np.dot(W[vector_vocab[word1]], W[vector_vocab[word2]])
+    return distance
+
+
 if __name__ == "__main__":
     # Read in the vocab file.
     words = read_vocab()
@@ -80,5 +91,9 @@ if __name__ == "__main__":
     W, vector_vocab = generate()
     
     # Randomly select word pairs for scoring until the specified sample count is reached.
-    word1, word2 = get_random_pair(words, sample_range)
-    print(word1, word2)
+    with open(args.scores_file, 'w') as f:
+        for i in range(args.sample_count):
+            word1, word2 = get_random_pair(words, sample_range)
+            print(word1, word2)
+            score = distance(W, vector_vocab, word1, word2)
+            print(score)
