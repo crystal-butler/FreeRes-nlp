@@ -94,14 +94,11 @@ if __name__ == '__main__':
     scores_sorted = sort_scores(scores_all)
     assert len(scores_all) == len(scores_sorted)
     scores_array = make_array(scores_sorted)
-    # assert (scores_array.shape)[0] == len(scores_sorted)
-    print(f'Shape of scores_array is {scores_array.shape}, type is {type(scores_array)}.')
-    print(f'First 10 values of scores_array are {scores_array[0:10]}.')
-    scores_norm = normalize_array(scores_array)
-    print(f'Shape of scores_norm is {scores_norm.shape}, type is {type(scores_norm)}.')
-    print(f'First 10 values of scores_norm are {scores_norm[0:10]}.')
+    assert scores_array.shape[0] == len(scores_sorted)
+    # scores_norm = normalize_array(scores_array)
     # assert scores_array.shape[0] == scores_norm.shape[0]
-    scores_trimmed = trim_scores(scores_norm)
+    # scores_trimmed = trim_scores(scores_norm)
+    scores_trimmed = trim_scores(scores_array)  # use this value to visualize non-normalized distribution
     print(f'After removing scores == 1, there are {scores_trimmed.shape} scores.')
     
     # Calculate statistics of the distribution.
