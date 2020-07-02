@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('scores_dir', help='full path to a directory containing all pairs synonymy scores', type=str)
-parser.add_argument('histogram_dir', help='full path to a directory where the histogram plot will be written', type=str)
+parser.add_argument('scores_dir', help='path to a directory containing all pairs synonymy scores', type=str)
+parser.add_argument('histogram_dir', help='path to a directory where the histogram plot will be written', type=str)
 parser.add_argument('bin_count', help='the number of bins used in the histogram', type=int)
 args = parser.parse_args()
 
@@ -48,13 +48,15 @@ def make_array(scores):
 def trim_scores(scores_array):
     """Only consider synonymy scores for pairs of different words.
     Same word pairs have a synonymy score of 1."""
-    trimmed_scores = scores_array[scores_array < 1]
+    scores_rounded = scores_array.round(decimals=6)  # clean up floating point errors and reduce significant digits
+    trimmed_scores = scores_rounded[scores_rounded < 1]
+    print(f'trimmed scores is type {type(trimmed_scores)}, with shape {trimmed_scores.shape}.')
     return trimmed_scores
 
 
 def normalize_array(scores_array):
-    scores_norm = (scores_array - np.min(scores_array))/np.ptp(scores_array)
-    scores_norm = scores_norm.round(decimals=6)  # clean up floating point errors and reduce significant digits
+    print(f'min of scores_array is {np.min(scores_array[0:-1])}.')
+    scores_norm = (scores_array - np.min(scores_array))/(np.max(scores_array) - np.min(scores_array))
     return scores_norm
 
 
@@ -92,12 +94,14 @@ if __name__ == '__main__':
     scores_sorted = sort_scores(scores_all)
     assert len(scores_all) == len(scores_sorted)
     scores_array = make_array(scores_sorted)
-    # assert (scores_array.shape)[0] == len(scores_sorted)
-    print(f'Shape of scores_array is {scores_array.shape}.')
+    assert scores_array.shape[0] == len(scores_sorted)
+    # Comment out the next three lines to skip normalization.
     scores_norm = normalize_array(scores_array)
-    # assert scores_array.shape[0] == scores_norm.shape[0]
+    assert scores_array.shape[0] == scores_norm.shape[0]
     scores_trimmed = trim_scores(scores_norm)
-    print(f'After removing scores == 1, there are {scores_trimmed.shape[0]} scores.')
+    # Comment out the next line if skipping normaliztion.
+    # scores_trimmed = trim_scores(scores_array)
+    print(f'After removing scores == 1, there are {scores_trimmed.shape} scores.')
     
     # Calculate statistics of the distribution.
     mu, sigma, a_min, a_max = calculate_statistics(scores_trimmed)

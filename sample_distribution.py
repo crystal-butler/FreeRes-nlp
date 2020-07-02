@@ -89,8 +89,14 @@ if __name__ == "__main__":
     
     # Randomly select word pairs for scoring until the specified sample count is reached.
     with open(args.scores_file, 'w') as f:
-        for i in range(args.sample_count):
+        count = args.sample_count
+        while count > 0:
             word1, word2 = get_random_pair(words, sample_range)
             score = distance(W, vector_vocab, word1, word2)
             if score != -100:
-                f.write("%s\n" % (score))
+                if np.isnan(score):
+                    continue
+                else:
+                    f.write("%s\n" % (score))
+                    count -= 1
+
