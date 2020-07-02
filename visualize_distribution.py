@@ -49,11 +49,13 @@ def trim_scores(scores_array):
     """Only consider synonymy scores for pairs of different words.
     Same word pairs have a synonymy score of 1."""
     trimmed_scores = scores_array[scores_array < 1]
+    print(f'trimmed scores is type {type(trimmed_scores)}, with shape {trimmed_scores.shape}.')
     return trimmed_scores
 
 
 def normalize_array(scores_array):
-    scores_norm = (scores_array - np.min(scores_array))/np.ptp(scores_array)
+    print(f'min of scores_array is {np.min(scores_array[0:-1])}.')
+    scores_norm = (scores_array - np.min(scores_array))/(np.max(scores_array) - np.min(scores_array))
     scores_norm = scores_norm.round(decimals=6)  # clean up floating point errors and reduce significant digits
     return scores_norm
 
@@ -93,11 +95,14 @@ if __name__ == '__main__':
     assert len(scores_all) == len(scores_sorted)
     scores_array = make_array(scores_sorted)
     # assert (scores_array.shape)[0] == len(scores_sorted)
-    print(f'Shape of scores_array is {scores_array.shape}.')
+    print(f'Shape of scores_array is {scores_array.shape}, type is {type(scores_array)}.')
+    print(f'First 10 values of scores_array are {scores_array[0:10]}.')
     scores_norm = normalize_array(scores_array)
+    print(f'Shape of scores_norm is {scores_norm.shape}, type is {type(scores_norm)}.')
+    print(f'First 10 values of scores_norm are {scores_norm[0:10]}.')
     # assert scores_array.shape[0] == scores_norm.shape[0]
     scores_trimmed = trim_scores(scores_norm)
-    print(f'After removing scores == 1, there are {scores_trimmed.shape[0]} scores.')
+    print(f'After removing scores == 1, there are {scores_trimmed.shape} scores.')
     
     # Calculate statistics of the distribution.
     mu, sigma, a_min, a_max = calculate_statistics(scores_trimmed)
