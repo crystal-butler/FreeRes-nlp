@@ -95,10 +95,12 @@ if __name__ == '__main__':
     assert len(scores_all) == len(scores_sorted)
     scores_array = make_array(scores_sorted)
     assert scores_array.shape[0] == len(scores_sorted)
-    # scores_norm = normalize_array(scores_array)
-    # assert scores_array.shape[0] == scores_norm.shape[0]
-    # scores_trimmed = trim_scores(scores_norm)
-    scores_trimmed = trim_scores(scores_array)  # use this value to visualize non-normalized distribution
+    # Comment out the next three lines to skip normalization.
+    scores_norm = normalize_array(scores_array)
+    assert scores_array.shape[0] == scores_norm.shape[0]
+    scores_trimmed = trim_scores(scores_norm)
+    # Comment out the next line if skipping normaliztion.
+    # scores_trimmed = trim_scores(scores_array)
     print(f'After removing scores == 1, there are {scores_trimmed.shape} scores.')
     
     # Calculate statistics of the distribution.
