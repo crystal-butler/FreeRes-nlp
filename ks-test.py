@@ -29,13 +29,18 @@ def make_array(scores_file):
     """Read a scores list and convert it into a numpy array."""
     pairs_scores = pd.read_csv(scores_file, header=None)
     scores_array = np.array(pairs_scores).astype(np.float)
+    scores_array = normalize_array(scores_array)  # comment out if no normalization is desired
     return(scores_array)
+
+
+def normalize_array(scores_array):
+    scores_norm = (scores_array - np.min(scores_array))/(np.max(scores_array) - np.min(scores_array))
+    return scores_norm
 
 
 def calculate_ks(scores_1, scores_2):
     """Calculate the Kolmogorov-Smirnov statistic."""
-    ks_stat, p_value = stats.ks_2samp(scores_1, scores_2)
-    print(ks_stat, p_value)
+    ks_stat, p_value = stats.ks_2samp(scores_1[:, 0], scores_2[:, 0])
     return ks_stat, p_value
 
 
@@ -43,10 +48,14 @@ def format_ks_stats(ks_stat, p_value):
     """Pretty print layout for Kolmogorov-Smirnov test results."""
     stats_printout = '---------------------------------------------------------------------------------\n'
     stats_printout += 'Kolmogorov-Smirnov Test Results\n---------------------------------------------------------------------------------\n'
+    stats_printout += ('Comparing files: ' + args.scores_file_1 + ' and ' + args.scores_file_2 + '\n')
     stats_printout += ('KS Statistic: ' + str(ks_stat) + '\n')
     stats_printout += ('p value: ' + str(p_value) + '\n')
     pass_fail = classify_pass_fail(p_value)
-    stats_printout += ('The test statistic ' + pass_fail + ' the null hypothesis test at the ' + args.p_value_target + ' level.')
+    if pass_fail == 'pass':
+        stats_printout += ('The test statistic accepts the null hypothesis of same distributions at the ' + str(args.p_value_target) + ' level.')
+    else:
+         stats_printout += ('The test statistic rejects the null hypothesis of same distributions at the ' + str(args.p_value_target) + ' level.')
     return stats_printout
 
 
