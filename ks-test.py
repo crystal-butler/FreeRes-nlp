@@ -7,6 +7,7 @@
 import os
 import argparse
 from scipy import stats
+import pandas as pd
 import numpy as np
 
 # Read in options.
@@ -21,5 +22,17 @@ args = parser.parse_args()
 
 def make_array(scores_file):
     """Read a scores list and convert it into a numpy array."""
-    scores_array = np.array(scores).astype(np.float)
+    pairs_scores = pd.read_csv(scores_file, header=None)
+    scores_array = np.array(pairs_scores).astype(np.float)
     return(scores_array)
+
+
+def calculate_ks(scores_1, scores_2):
+    """Calculate the Kolmogorov-Smirnov statistic."""
+    ks_stat, p_value = stats.ks_2samp(scores_1, scores_2)
+    print(ks_stat, p_value)
+    return ks_stat, p_value
+
+
+if __name__ == '__main__':
+    
