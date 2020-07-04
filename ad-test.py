@@ -18,9 +18,9 @@ parser.add_argument('scores_file', help='path to first comparison file of synony
 parser.add_argument('--stats_dir', help='optional path to the directory where the test statistic is written', 
                     default=None,
                     type=str)
-parser.add_argument('--p_value_target', help='optional target probability value for passing the AD test', 
-                    default=0.05,
-                    type=float)
+# parser.add_argument('--p_value_target', help='optional target probability value for passing the AD test', 
+#                     default=0.05,
+#                     type=float)
 args = parser.parse_args()
 
 
@@ -43,18 +43,23 @@ def calculate_ad(scores):
     return ad_stat, crit_values, sig_levels
 
 
-def format_ad_stats(ad_stat, sig_levels):
+def format_ad_stats(ad_stat, crit_values, sig_levels):
     """Pretty print layout for Anderson-Darling test results."""
     stats_printout = '---------------------------------------------------------------------------------\n'
     stats_printout += 'Anderson-Darling Test Results\n---------------------------------------------------------------------------------\n'
-    stats_printout += ('Data file: ' + args.scores_file + '\n')
-    stats_printout += ('AD Statistic: ' + str(as_stat) + '\n')
-    stats_printout += ('significance levels: ' + str(sig_levels) + '\n')
-    pass_fail = classify_pass_fail(sig_levels)
-    if pass_fail == 'pass':
-        stats_printout += ('The test statistic accepts the null hypothesis of same distributions at the ' + str(args.p_value_target) + ' level.')
-    else:
-         stats_printout += ('The test statistic rejects the null hypothesis of same distributions at the ' + str(args.p_value_target) + ' level.')
+    stats_printout += ('Sample data file: ' + args.scores_file + '\n')
+    stats_printout += ('AD Statistic: ' + str(ad_stat) + '\n')
+    stats_printout += ('Critical Values :' + '\n')
+    for n in crit_values:
+        stats_printout += (str(n) + '\n')
+    stats_printout += ('Significance Levels:' + '\n')
+    for n in sig_levels:
+        stats_printout += (str(n) + '\n')
+    # pass_fail = classify_pass_fail(sig_levels)
+    # if pass_fail == 'pass':
+    #     stats_printout += ('The test statistic accepts the null hypothesis of same distributions at the ' + str(args.p_value_target) + ' level.')
+    # else:
+    #      stats_printout += ('The test statistic rejects the null hypothesis of same distributions at the ' + str(args.p_value_target) + ' level.')
     return stats_printout
 
 
