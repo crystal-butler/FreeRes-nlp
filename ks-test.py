@@ -1,8 +1,8 @@
 # Crystal Butler
 # 2020/07/02
 # Perform a Kolmogorov-Smirnov test on two sets of synonymy
-# scores , to determine the probability that they are drawn
-# from different distributions. Samples do not have to be equal size.
+# scores, to determine the probability that they are drawn
+# from the same distribution. Samples do not have to be equal size.
 # From the SciPy docs: "This is a two-sided test for the null hypothesis that 
 # 2 independent samples are drawn from the same continuous distribution."
 
