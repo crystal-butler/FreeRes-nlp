@@ -57,12 +57,10 @@ def trim_scores(scores_array):
     Same word pairs have a synonymy score of 1."""
     scores_rounded = scores_array.round(decimals=6)  # clean up floating point errors and reduce significant digits
     trimmed_scores = scores_rounded[scores_rounded < 1]
-    print(f'trimmed scores is type {type(trimmed_scores)}, with shape {trimmed_scores.shape}.')
     return trimmed_scores
 
 
 def normalize_array(scores_array):
-    print(f'min of scores_array is {np.min(scores_array[0:-1])}.')
     scores_norm = (scores_array - np.min(scores_array))/(np.max(scores_array) - np.min(scores_array))
     return scores_norm
 

@@ -55,12 +55,10 @@ def trim_scores(scores_array):
     Same word pairs have a synonymy score of 1."""
     scores_rounded = scores_array.round(decimals=6)  # clean up floating point errors and reduce significant digits
     trimmed_scores = scores_rounded[scores_rounded < 1]
-    print(f'trimmed scores is type {type(trimmed_scores)}, with shape {trimmed_scores.shape}.')
     return trimmed_scores
 
 
 def normalize_array(scores_array):
-    print(f'min of scores_array is {np.min(scores_array[0:-1])}.')
     scores_norm = (scores_array - np.min(scores_array))/(np.max(scores_array) - np.min(scores_array))
     return scores_norm
 
@@ -77,8 +75,8 @@ def calculate_statistics(scores_array):
 def make_output_filenames():
     """Write statistics and histogram figure to the specified directory."""
     hist_file = os.path.join(args.histogram_dir, 'distribution_histogram.png')
-    stats_file = os.path.join(args.histogram_dir, 'distribution_stats_1.txt')
-    stats_file = os.path.join(args.histogram_dir, 'distribution_stats_2.txt')
+    stats_file_1 = os.path.join(args.histogram_dir, 'distribution_stats_1.txt')
+    stats_file_2 = os.path.join(args.histogram_dir, 'distribution_stats_2.txt')
     return hist_file, stats_file_1, stats_file_2
 
 
@@ -96,7 +94,7 @@ def format_distribution_stats(mu, sigma, a_min, a_max):
 if __name__ == '__main__':
     make_output_subdir()
     scores_1 = read_scores(args.scores_file_1)
-    scores_w = read_scores(args.scores_file_2)
+    scores_2 = read_scores(args.scores_file_2)
     scores_sorted_1 = sort_scores(scores_1)
     scores_sorted_2 = sort_scores(scores_2)
     scores_array_1 = make_array(scores_sorted_1)
@@ -120,7 +118,7 @@ if __name__ == '__main__':
     fig, ax = plt.subplots(figsize=(14, 8.5))  #(width, height) in inches
     
     # Plot the histogram of the first dataset.
-    n, bins, patches = ax.hist(scores_trimmed_1, args.bin_count, density=1, alpha=.05)
+    n, bins, patches = ax.hist(scores_trimmed_1, args.bin_count, density=1, alpha=.5)
     plt.figtext(0.02, 0.12, stats_printout_1, horizontalalignment='left', verticalalignment='center', fontsize=14)
     # Add a 'best fit' line.
     y = ((1 / (np.sqrt(2 * np.pi) * sigma_1)) *
@@ -128,7 +126,7 @@ if __name__ == '__main__':
     ax.plot(bins, y, '--')
 
     # Plot the histogram of the second dataset.
-    n, bins, patches = ax.hist(scores_trimmed_2, args.bin_count, density=1, alpha=.05)
+    n, bins, patches = ax.hist(scores_trimmed_2, args.bin_count, density=1, alpha=.5)
     plt.figtext(0.52, 0.12, stats_printout_2, horizontalalignment='left', verticalalignment='center', fontsize=14)
     # Add a 'best fit' line.
     y = ((1 / (np.sqrt(2 * np.pi) * sigma_2)) *
