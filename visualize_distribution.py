@@ -1,3 +1,7 @@
+# Crystal Butler
+# 2020/06/15
+# Plot a histogram of relatedness scores, with a best fit curve overlay.
+
 import os
 import matplotlib
 import numpy as np
@@ -7,7 +11,10 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('scores_dir', help='path to a directory containing all pairs synonymy scores', type=str)
 parser.add_argument('histogram_dir', help='path to a directory where the histogram plot will be written', type=str)
-parser.add_argument('bin_count', help='the number of bins used in the histogram', type=int)
+parser.add_argument('--bin_count', 
+                    help='the number of bins used in the histogram', 
+                    default=100,
+                    type=int)
 args = parser.parse_args()
 
 
