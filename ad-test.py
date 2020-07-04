@@ -5,6 +5,7 @@
 # from the test distribution.
 # From the SciPy docs: "This function works for normal, exponential, 
 # logistic, or Gumbel (Extreme Value Type I) distributions."
+# Distribution options are ‘norm’, ‘expon’, ‘logistic’, ‘gumbel’, ‘gumbel_l’, ‘gumbel_r'
 
 import os
 import argparse
@@ -15,12 +16,12 @@ import numpy as np
 # Read in options.
 parser = argparse.ArgumentParser()
 parser.add_argument('scores_file', help='path to first comparison file of synonymy scores', type=str)
+parser.add_argument('--dist_type', help='optional distribution type to test against',
+                    default='norm',
+                    type=str)  
 parser.add_argument('--stats_dir', help='optional path to the directory where the test statistic is written', 
                     default=None,
                     type=str)
-# parser.add_argument('--p_value_target', help='optional target probability value for passing the AD test', 
-#                     default=0.05,
-#                     type=float)
 args = parser.parse_args()
 
 
@@ -39,7 +40,7 @@ def normalize_array(scores_array):
 
 def calculate_ad(scores):
     """Calculate the Anderson-Darling statistic."""
-    ad_stat, crit_values , sig_levels = stats.anderson(scores[:, 0], dist='gumbel_r')
+    ad_stat, crit_values , sig_levels = stats.anderson(scores[:, 0], dist=args.dist_type)
     return ad_stat, crit_values, sig_levels
 
 
@@ -54,19 +55,8 @@ def format_ad_stats(ad_stat, crit_values, sig_levels):
         stats_printout += (str(n) + '\n')
     stats_printout += ('Significance Levels:' + '\n')
     for n in sig_levels:
-        stats_printout += (str(n) + '\n')
-    # pass_fail = classify_pass_fail(sig_levels)
-    # if pass_fail == 'pass':
-    #     stats_printout += ('The test statistic accepts the null hypothesis of same distributions at the ' + str(args.p_value_target) + ' level.')
-    # else:
-    #      stats_printout += ('The test statistic rejects the null hypothesis of same distributions at the ' + str(args.p_value_target) + ' level.')
+        stats_printout += (str(n) + '\n')x
     return stats_printout
-
-
-def classify_pass_fail(sig_levels):
-    """Compare the calculated probability to the target probability, for null hypothesis testing."""
-    pass_fail = 'passes' if sig_levels >= args.p_value_target else 'fails'
-    return pass_fail
 
 
 def write_stats(stats_printout):
