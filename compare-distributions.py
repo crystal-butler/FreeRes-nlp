@@ -1,6 +1,6 @@
 # Crystal Butler
 # 2020/06/15
-# Plot a histogram of relatedness scores, with a best fit curve overlay.
+# Plot histograms of two sets of relatedness scores with best fit curves overlaid.
 
 import os
 import matplotlib
@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('scores_dir', help='path to a directory containing all pairs synonymy scores', type=str)
+parser.add_argument('scores_file_1', help='path to first comparison file of synonymy scores', type=str)
+parser.add_argument('scores_file_2', help='path to second comparison file of synonymy scores', type=str)
 parser.add_argument('histogram_dir', help='path to a directory where the histogram plot will be written', type=str)
 parser.add_argument('--bin_count', 
                     help='the number of bins used in the histogram', 
@@ -24,19 +25,16 @@ def make_output_subdir():
     return
 
 
-def concatenate_scores():
+def read_scores(scores_file):
     """Get all the scores from a set of files in a directory,
     and put them into a single list."""
     score_count = 0
     all_scores = []
-    for entry in sorted(os.listdir(args.scores_dir)):
-        if os.path.isfile(os.path.join(args.scores_dir, entry)):
-            if not entry.startswith('.'):
-                with open(os.path.join(args.scores_dir, entry), 'r') as f:
-                    for line in f:
-                        score = line.strip()
-                        all_scores.append(score)
-                        score_count += 1
+    with open(scores_file, 'r') as f:
+        for line in f:
+            score = line.strip()
+            all_scores.append(score)
+            score_count += 1
     assert len(all_scores) == score_count
     return all_scores
 
@@ -79,8 +77,9 @@ def calculate_statistics(scores_array):
 def make_output_filenames():
     """Write statistics and histogram figure to the specified directory."""
     hist_file = os.path.join(args.histogram_dir, 'distribution_histogram.png')
-    stats_file = os.path.join(args.histogram_dir, 'distribution_stats.txt')
-    return hist_file, stats_file
+    stats_file = os.path.join(args.histogram_dir, 'distribution_stats_1.txt')
+    stats_file = os.path.join(args.histogram_dir, 'distribution_stats_2.txt')
+    return hist_file, stats_file_1, stats_file_2
 
 
 def format_distribution_stats(mu, sigma, a_min, a_max):
@@ -96,45 +95,60 @@ def format_distribution_stats(mu, sigma, a_min, a_max):
 
 if __name__ == '__main__':
     make_output_subdir()
-    scores_all = concatenate_scores()
-    print(f'Read in {len(scores_all)} scores.')
-    scores_sorted = sort_scores(scores_all)
-    assert len(scores_all) == len(scores_sorted)
-    scores_array = make_array(scores_sorted)
-    assert scores_array.shape[0] == len(scores_sorted)
+    scores_1 = read_scores(args.scores_file_1)
+    scores_w = read_scores(args.scores_file_2)
+    scores_sorted_1 = sort_scores(scores_1)
+    scores_sorted_2 = sort_scores(scores_2)
+    scores_array_1 = make_array(scores_sorted_1)
+    scores_array_2 = make_array(scores_sorted_2)
     # Comment out the next three lines to skip normalization.
-    scores_norm = normalize_array(scores_array)
-    assert scores_array.shape[0] == scores_norm.shape[0]
-    scores_trimmed = trim_scores(scores_norm)
-    # Comment out the next line if skipping normaliztion.
-    # scores_trimmed = trim_scores(scores_array)
-    print(f'After removing scores == 1, there are {scores_trimmed.shape} scores.')
-    
-    # Calculate statistics of the distribution.
-    mu, sigma, a_min, a_max = calculate_statistics(scores_trimmed)
-    stats_printout = format_distribution_stats(mu, sigma, a_min, a_max)
+    scores_norm_1 = normalize_array(scores_array_1)
+    scores_norm_2 = normalize_array(scores_array_2)
+    scores_trimmed_1 = trim_scores(scores_norm_1)
+    scores_trimmed_2 = trim_scores(scores_norm_2)
+    # Uncomment the next 2 lines if skipping normaliztion.
+    # scores_trimmed-1 = trim_scores(scores_array_1)
+    # scores_trimmed-2 = trim_scores(scores_array_2)
+
+    # Calculate statistics of the distributions.
+    mu_1, sigma_1, a_min_1, a_max_1 = calculate_statistics(scores_trimmed_1)
+    stats_printout_1 = format_distribution_stats(mu_1, sigma_1, a_min_1, a_max_1)
+    mu_2, sigma_2, a_min_2, a_max_2 = calculate_statistics(scores_trimmed_2)
+    stats_printout_2 = format_distribution_stats(mu_2, sigma_2, a_min_2, a_max_2)
 
     # Set up the plot.
     fig, ax = plt.subplots(figsize=(14, 8.5))  #(width, height) in inches
-    # Plot the histogram of the data.
-    n, bins, patches = ax.hist(scores_trimmed, args.bin_count, density=1)
-    plt.figtext(0.02, 0.12, stats_printout, horizontalalignment='left', verticalalignment='center', fontsize=14)
-    plt.subplots_adjust(bottom=0.32, top=0.95, right=0.98, left=0.06)
+    
+    # Plot the histogram of the first dataset.
+    n, bins, patches = ax.hist(scores_trimmed_1, args.bin_count, density=1, alpha=.05)
+    plt.figtext(0.02, 0.12, stats_printout_1, horizontalalignment='left', verticalalignment='center', fontsize=14)
     # Add a 'best fit' line.
-    y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
-        np.exp(-0.5 * (1 / sigma * (bins - mu))**2))
+    y = ((1 / (np.sqrt(2 * np.pi) * sigma_1)) *
+        np.exp(-0.5 * (1 / sigma_1 * (bins - mu_1))**2))
     ax.plot(bins, y, '--')
+
+    # Plot the histogram of the second dataset.
+    n, bins, patches = ax.hist(scores_trimmed_2, args.bin_count, density=1, alpha=.05)
+    plt.figtext(0.52, 0.12, stats_printout_2, horizontalalignment='left', verticalalignment='center', fontsize=14)
+    # Add a 'best fit' line.
+    y = ((1 / (np.sqrt(2 * np.pi) * sigma_2)) *
+        np.exp(-0.5 * (1 / sigma_2 * (bins - mu_2))**2))
+    ax.plot(bins, y, '--')
+
     # Format the figure.
+    plt.subplots_adjust(bottom=0.32, top=0.95, right=0.98, left=0.06)
     y_label = 'Probability Density'
-    x_label = 'Synonymy Scores: ' + str(args.bin_count) + ' Bins'
+    x_label = 'Score Grouping: ' + str(args.bin_count) + ' Bins'
     ax.set_xlabel(x_label, fontsize=16)
     ax.set_ylabel(y_label, fontsize=16)
     ax.set_title('Histogram of Synonymy Scores', fontsize=18)
 
     # Save the figure and statistics.
-    hist_file, stats_file = make_output_filenames()
-    with open(stats_file, 'w') as f_stat:
-        f_stat.write(stats_printout)
+    hist_file, stats_file_1, stats_file_2 = make_output_filenames()
+    with open(stats_file_1, 'w') as f_stat:
+        f_stat.write(stats_printout_1)
+    with open(stats_file_2, 'w') as f_stat:
+        f_stat.write(stats_printout_2)
     plt.savefig(hist_file, format='png')
 
     # Display the figure.
