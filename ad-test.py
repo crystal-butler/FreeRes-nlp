@@ -55,7 +55,7 @@ def format_ad_stats(ad_stat, crit_values, sig_levels):
         stats_printout += (str(n) + '\n')
     stats_printout += ('Significance Levels:' + '\n')
     for n in sig_levels:
-        stats_printout += (str(n) + '\n')x
+        stats_printout += (str(n) + '\n')
     return stats_printout
 
 

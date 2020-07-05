@@ -1,3 +1,11 @@
+# Crystal Butler
+# 2020/06/15
+# Perform agglomerative hierarchical clustering on a set of single word labels,
+# using the relatedness scores output by word_pair_distance.py.
+# Output includes a dendrogram for each input label set, statistics
+# describing the set and a determination as to whether it passes or
+# fails the clustering test for set coherence.
+
 import os
 import sys
 import argparse
