@@ -10,7 +10,9 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('scores_file_1', help='path to first comparison file of synonymy scores', type=str)
+parser.add_argument('data_label_1', help='label for the first dataset', type=str)
 parser.add_argument('scores_file_2', help='path to second comparison file of synonymy scores', type=str)
+parser.add_argument('data_label_2', help='label for the second dataset', type=str)
 parser.add_argument('histogram_dir', help='path to a directory where the histogram plot will be written', type=str)
 parser.add_argument('--bin_count', 
                     help='the number of bins used in the histogram', 
@@ -80,9 +82,10 @@ def make_output_filenames():
     return hist_file, stats_file_1, stats_file_2
 
 
-def format_distribution_stats(mu, sigma, a_min, a_max):
+def format_distribution_stats(mu, sigma, a_min, a_max, data_label):
     """Pretty print layout for distribution statistics; can be appended to the histogram or saved out as a file."""
-    stats_printout = '---------------------------------------------------------------------------------\n'
+    stats_printout = data_label + '\n'
+    stats_printout += '---------------------------------------------------------------------------------\n'
     stats_printout += 'Synonymy Scores Distribution Statistics\n---------------------------------------------------------------------------------\n'
     stats_printout += ('Mean: ' + str(mu) + '\n')
     stats_printout += ('Standard Deviation: ' + str(sigma) + '\n')
@@ -110,15 +113,15 @@ if __name__ == '__main__':
 
     # Calculate statistics of the distributions.
     mu_1, sigma_1, a_min_1, a_max_1 = calculate_statistics(scores_trimmed_1)
-    stats_printout_1 = format_distribution_stats(mu_1, sigma_1, a_min_1, a_max_1)
+    stats_printout_1 = format_distribution_stats(mu_1, sigma_1, a_min_1, a_max_1, args.data_label_1)
     mu_2, sigma_2, a_min_2, a_max_2 = calculate_statistics(scores_trimmed_2)
-    stats_printout_2 = format_distribution_stats(mu_2, sigma_2, a_min_2, a_max_2)
+    stats_printout_2 = format_distribution_stats(mu_2, sigma_2, a_min_2, a_max_2, args.data_label_2)
 
     # Set up the plot.
     fig, ax = plt.subplots(figsize=(14, 8.5))  #(width, height) in inches
     
     # Plot the histogram of the first dataset.
-    n, bins, patches = ax.hist(scores_trimmed_1, args.bin_count, density=1, alpha=.5)
+    n, bins, patches = ax.hist(scores_trimmed_1, args.bin_count, density=1, alpha=.5, label=args.data_label_1)
     plt.figtext(0.02, 0.12, stats_printout_1, horizontalalignment='left', verticalalignment='center', fontsize=14)
     # Add a 'best fit' line.
     y = ((1 / (np.sqrt(2 * np.pi) * sigma_1)) *
@@ -126,7 +129,7 @@ if __name__ == '__main__':
     ax.plot(bins, y, '--')
 
     # Plot the histogram of the second dataset.
-    n, bins, patches = ax.hist(scores_trimmed_2, args.bin_count, density=1, alpha=.5)
+    n, bins, patches = ax.hist(scores_trimmed_2, args.bin_count, density=1, alpha=.5, label=args.data_label_2)
     plt.figtext(0.52, 0.12, stats_printout_2, horizontalalignment='left', verticalalignment='center', fontsize=14)
     # Add a 'best fit' line.
     y = ((1 / (np.sqrt(2 * np.pi) * sigma_2)) *
@@ -134,12 +137,13 @@ if __name__ == '__main__':
     ax.plot(bins, y, '--')
 
     # Format the figure.
+    plt.legend(loc='upper right')
     plt.subplots_adjust(bottom=0.32, top=0.95, right=0.98, left=0.06)
     y_label = 'Probability Density'
     x_label = 'Score Grouping: ' + str(args.bin_count) + ' Bins'
     ax.set_xlabel(x_label, fontsize=16)
     ax.set_ylabel(y_label, fontsize=16)
-    ax.set_title('Histogram of Synonymy Scores', fontsize=18)
+    ax.set_title('Synonymy Scores Comparison', fontsize=18)
 
     # Save the figure and statistics.
     hist_file, stats_file_1, stats_file_2 = make_output_filenames()
