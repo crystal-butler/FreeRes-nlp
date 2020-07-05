@@ -3,7 +3,8 @@
 # Crystal Butler
 # 2019/03/01
 # Adapted from https://github.com/stanfordnlp/GloVe/blob/master/eval/python/distance.py.
-# Requires pretrained word embeddings (semantic vectors) and lists of word pairs as input.
+# Requires pretrained word embeddings (semantic vectors) and lists of  space separated
+# word pairs as input.
 # Words that are misspelled or not in the vocabulary of the embeddings are silently skipped.
 # The script outputs four sets of files, one file per label pair, containing:
 #   -- a label pair and relatedness score on each line (to args.output_dir)
