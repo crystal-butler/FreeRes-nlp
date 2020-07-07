@@ -53,7 +53,7 @@ def generate():
         with open(args.vocab_file, 'r') as f:
             words = [x.rstrip().split(' ')[0] for x in f.readlines()]
     # Semantic vectors (or word embeddings) are the result of training a ML model to represent word relatedness.
-    with open(args.vectors_file, 'r') as f:
+    with open(args.vectors_file, 'r', encoding="utf-8", errors='ignore') as f:
         # The pre-trained semantic vectors will go into a Python dictionary.
         # Dictionaries are key:value indexed; lookup is done via hash function and should be O(1) time complexity.
         # But the dictionary is just an intermediate. Lookups will be done against a numpy ndarray, constructed later.
@@ -123,7 +123,7 @@ if __name__ == "__main__":
                         f_err = open(err + ID + "_errors.txt", 'w')
                         f_lab = open(lab + ID + "_labels.txt", 'w')
                         f_scr = open(scr + ID + "_scores.txt", 'w')
-                        f_labscr = open(labscr + ID, 'w')
+                        f_labscr = open(labscr + ID + ".txt", 'w')
 
                         # Calculate n-1 for original number of labels used to generate the all-pairs list.
                         cnt = 0
