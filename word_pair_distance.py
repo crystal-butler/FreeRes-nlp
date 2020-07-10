@@ -11,7 +11,7 @@
 #   -- words not found in the vocabulary, if any (to args.output_dir/Errors)
 #   -- labels successfully processed by the script (to args.output_dir/Label_Lists)
 #   -- relatedness scores only (to args.output_dir/Score_Lists)
-# The third and fourth files are required for performing clustering in MATLAB.
+# The third and fourth files are required for performing clustering.
 
 import os
 import shutil
