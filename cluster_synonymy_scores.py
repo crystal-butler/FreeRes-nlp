@@ -18,7 +18,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('scores_dir', help='full path to a directory containing all pairs synonymy scores', type=str)
 parser.add_argument('labels_dir', help='full path to a directory containing labels for all pairs synonymy scores', type=str)
 parser.add_argument('clustering_dir', help='full path to a directory where clustering output will be written', type=str)
-parser.add_argument('dendro_cutoff', help='the cutoff value for agglomerative hierarchical clustering', type=float)
+parser.add_argument('--dendro_cutoff', help='the cutoff value for agglomerative hierarchical clustering', default=0.7275, type=float)
 args = parser.parse_args()
 
 def make_input_lists():
