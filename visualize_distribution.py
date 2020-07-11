@@ -104,7 +104,7 @@ if __name__ == '__main__':
     scores_norm = normalize_array(scores_array)
     assert scores_array.shape[0] == scores_norm.shape[0]
     scores_trimmed = trim_scores(scores_norm)
-    # Comment out the next line if skipping normaliztion.
+    # Uncomment the next line if skipping normaliztion.
     # scores_trimmed = trim_scores(scores_array)
     print(f'After removing scores == 1, there are {scores_trimmed.shape} scores.')
     
