@@ -59,7 +59,7 @@ def trim_scores(scores_array):
     Same word pairs have a synonymy score of 1."""
     scores_rounded = scores_array.round(decimals=6)  # clean up floating point errors and reduce significant digits
     trimmed_scores = scores_rounded
-    # trimmed_scores = scores_rounded[(scores_rounded > .875) & (scores_rounded < 1)]
+    # trimmed_scores = scores_rounded[(scores_rounded > .95) & (scores_rounded < 1)]
     return trimmed_scores
 
 
@@ -118,16 +118,15 @@ if __name__ == '__main__':
     fig, ax = plt.subplots(figsize=(14, 8.5))  #(width, height) in inches
     # Plot the histogram of the data.
     weights=np.ones(len(scores_trimmed)) / len(scores_trimmed)
-    _, bins, _ = ax.hist(scores_trimmed, args.bin_count)
-    # ax.yaxis.set_major_formatter(PercentFormatter(1))
+    _, bins, _ = ax.hist(scores_trimmed, args.bin_count, weights=weights)
+    ax.yaxis.set_major_formatter(PercentFormatter(1))
     plt.figtext(0.02, 0.12, stats_printout, horizontalalignment='left', verticalalignment='center', fontsize=14)
     plt.subplots_adjust(bottom=0.32, top=0.95, right=0.98, left=0.06)
-    # mu, sigma = scipy.stats.norm.fit(scores_trimmed)
     # best_fit_line = scipy.stats.norm.pdf(bins, mu, sigma)
     # plt.plot(bins, best_fit_line)
     # Format the figure.
-    y_label = 'Count per Bin'
-    x_label = 'Synonymy Scores: ' + str(args.bin_count) + ' Bins, ' + str(len(scores_trimmed)) + ' of ' + str(len(scores_sorted)) + ' Total Scores'
+    y_label = 'Percentage per Bin'
+    x_label = str(args.bin_count) + ' Bins, ' + str(len(scores_trimmed)) + ' Total Scores'
     ax.set_xlabel(x_label, fontsize=16)
     ax.set_ylabel(y_label, fontsize=16)
     ax.set_title('Histogram of Synonymy Scores', fontsize=18)
