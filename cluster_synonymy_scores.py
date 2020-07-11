@@ -172,7 +172,8 @@ if __name__ == '__main__':
                 continue
             
             linkage_matrix = build_linkage_matrix(distances_array)
-            assert linkage_matrix.shape[0] == (len(labels_array) - 1), "The linkage matrix and labels array have mismatched lengths."
+            print((linkage_matrix.shape[0] + 1), (len(labels_array)))
+            assert (linkage_matrix.shape[0] + 1) == (len(labels_array)), "The linkage matrix and labels array have mismatched lengths."
             cophenetic_coefficient, cluster_membership, pct = calculate_cluster_stats(linkage_matrix, distances_array)
             stats_printout = format_cluster_stats(cophenetic_coefficient, cluster_membership, pct)
 
@@ -198,7 +199,7 @@ if __name__ == '__main__':
             with open(stats_file, 'w') as f_stat:
                 f_stat.write(stats_printout)
             plt.savefig(dendro_file, format='png')
-            plt.show()
+            # plt.show()
             plt.close()
 
     else:
