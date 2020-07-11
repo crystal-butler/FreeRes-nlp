@@ -68,15 +68,16 @@ def get_random_pair(words, sample_range):
     return word1, word2
 
 
-def distance(W, vector_vocab, word1, word2):
+def calculate_score(W, vector_vocab, word1, word2):
     if word1 not in vector_vocab or word2 not in vector_vocab:
         # Magic number to indicate that some word wasn't in the vocabulary.
         return -100
-
+    if word1 == word2:
+        return 1
     # Cosine similarity is calculated as (vector1 • vector2) / (\\vector1\\ * \\vector2\\). But the magnitudes of
     # our vectors have all been normalized to 1, so this reduces to a vector dot product.
-    distance = np.dot(W[vector_vocab[word1]], W[vector_vocab[word2]])
-    return distance
+    score = np.dot(W[vector_vocab[word1]], W[vector_vocab[word2]])
+    return score
 
 
 if __name__ == "__main__":
@@ -92,11 +93,13 @@ if __name__ == "__main__":
         count = args.sample_count
         while count > 0:
             word1, word2 = get_random_pair(words, sample_range)
-            score = distance(W, vector_vocab, word1, word2)
+            score = calculate_score(W, vector_vocab, word1, word2)
             if score != -100:
                 if np.isnan(score):
                     continue
                 else:
+                    # if (score > 0.875) and (score < 1):
+                    #     print(f'Words {word1} and {word2} have a synonymy score of {score}!')
                     f.write("%s\n" % (score))
                     count -= 1
 

@@ -4,8 +4,10 @@
 
 import os
 import matplotlib
+import scipy.stats
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import PercentFormatter
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -56,7 +58,8 @@ def trim_scores(scores_array):
     """Only consider synonymy scores for pairs of different words.
     Same word pairs have a synonymy score of 1."""
     scores_rounded = scores_array.round(decimals=6)  # clean up floating point errors and reduce significant digits
-    trimmed_scores = scores_rounded[scores_rounded < 1]
+    trimmed_scores = scores_rounded
+    # trimmed_scores = scores_rounded[(scores_rounded > .875) & (scores_rounded < 1)]
     return trimmed_scores
 
 
@@ -106,7 +109,6 @@ if __name__ == '__main__':
     scores_trimmed = trim_scores(scores_norm)
     # Uncomment the next line if skipping normaliztion.
     # scores_trimmed = trim_scores(scores_array)
-    print(f'After removing scores == 1, there are {scores_trimmed.shape} scores.')
     
     # Calculate statistics of the distribution.
     mu, sigma, a_min, a_max = calculate_statistics(scores_trimmed)
@@ -115,16 +117,17 @@ if __name__ == '__main__':
     # Set up the plot.
     fig, ax = plt.subplots(figsize=(14, 8.5))  #(width, height) in inches
     # Plot the histogram of the data.
-    n, bins, patches = ax.hist(scores_trimmed, args.bin_count, density=1)
+    weights=np.ones(len(scores_trimmed)) / len(scores_trimmed)
+    _, bins, _ = ax.hist(scores_trimmed, args.bin_count)
+    # ax.yaxis.set_major_formatter(PercentFormatter(1))
     plt.figtext(0.02, 0.12, stats_printout, horizontalalignment='left', verticalalignment='center', fontsize=14)
     plt.subplots_adjust(bottom=0.32, top=0.95, right=0.98, left=0.06)
-    # Add a 'best fit' line.
-    y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
-        np.exp(-0.5 * (1 / sigma * (bins - mu))**2))
-    ax.plot(bins, y, '--')
+    # mu, sigma = scipy.stats.norm.fit(scores_trimmed)
+    # best_fit_line = scipy.stats.norm.pdf(bins, mu, sigma)
+    # plt.plot(bins, best_fit_line)
     # Format the figure.
-    y_label = 'Probability Density'
-    x_label = 'Synonymy Scores: ' + str(args.bin_count) + ' Bins'
+    y_label = 'Count per Bin'
+    x_label = 'Synonymy Scores: ' + str(args.bin_count) + ' Bins, ' + str(len(scores_trimmed)) + ' of ' + str(len(scores_sorted)) + ' Total Scores'
     ax.set_xlabel(x_label, fontsize=16)
     ax.set_ylabel(y_label, fontsize=16)
     ax.set_title('Histogram of Synonymy Scores', fontsize=18)
