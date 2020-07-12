@@ -81,8 +81,8 @@ def build_linkage_matrix(distances_array):
 def extract_dendro_name(labels_file, scores_file):
     labels_name = os.path.basename(labels_file)
     scores_name = os.path.basename(scores_file)
-    labels_prefix = labels_name.split('.')[0]
-    scores_prefix = scores_name.split('.')[0]
+    labels_prefix = labels_name.split('_')[0]
+    scores_prefix = scores_name.split('_')[0]
     assert labels_prefix == scores_prefix, "Labels and scores should have the same file name prefix."
     return labels_prefix
 
@@ -197,7 +197,10 @@ if __name__ == '__main__':
             dendro_file, stats_file = make_output_filenames(pct, dendro_name)
             with open(stats_file, 'w') as f_stat:
                 f_stat.write(stats_printout)
-            plt.savefig(dendro_file, format='png')
+            try:
+                plt.savefig(dendro_file, format='png')
+            except:
+                print(f'Unable to save {dendro_file}!')
             # plt.show()
             plt.close()
 
