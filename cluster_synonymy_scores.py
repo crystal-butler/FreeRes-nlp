@@ -179,8 +179,7 @@ if __name__ == '__main__':
             # Title the dendrogram, using the labels file name.
             dendro_name = extract_dendro_name(labels_file, scores_file)
             # Set up the plot.
-            # fig, ax = plt.subplots(figsize=(14, 8.5))  #(width, height) in inches
-            fig, ax = plt.subplots(figsize=(16, 8.5))  #(width, height) in inches
+            fig, ax = plt.subplots(figsize=(14, 8.5))  #(width, height) in inches
             title = "Image: " + dendro_name
             plt.title(title, fontsize=18)
             plt.rc('ytick',labelsize=14)
@@ -191,8 +190,7 @@ if __name__ == '__main__':
             plt.subplots_adjust(bottom=0.22, top=0.95, right=0.98, left=0.06)
             # Create the dendrogram, with a cutoff specified during module invocation.
             dendro = sch.dendrogram(linkage_matrix, labels=labels_array, color_threshold=args.dendro_cutoff, \
-                # leaf_font_size=14, leaf_rotation=70, count_sort='ascending', ax=ax)
-                leaf_font_size=9, leaf_rotation=90, count_sort='ascending', ax=ax)
+                leaf_font_size=14, leaf_rotation=70, count_sort='ascending', ax=ax)
             ax.set_ylim(0, 1)
 
             # Save out the plot and statistics.
@@ -203,7 +201,7 @@ if __name__ == '__main__':
                 plt.savefig(dendro_file, format='png')
             except:
                 print(f'Unable to save {dendro_file}!')
-            plt.show()  # uncomment to display the plot before continuing
+            # plt.show()  # uncomment to display the plot before continuing
             plt.close()
 
     else:
