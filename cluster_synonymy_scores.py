@@ -190,7 +190,8 @@ if __name__ == '__main__':
             plt.subplots_adjust(bottom=0.22, top=0.95, right=0.98, left=0.06)
             # Create the dendrogram, with a cutoff specified during module invocation.
             dendro = sch.dendrogram(linkage_matrix, labels=labels_array, color_threshold=args.dendro_cutoff, \
-                leaf_font_size=14, leaf_rotation=70, count_sort='ascending', ax=ax)
+                # leaf_font_size=14, leaf_rotation=70, count_sort='ascending', ax=ax)
+                leaf_font_size=11, leaf_rotation=90, count_sort='ascending', ax=ax)
             ax.set_ylim(0, 1)
 
             # Save out the plot and statistics.
