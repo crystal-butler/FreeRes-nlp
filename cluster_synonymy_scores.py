@@ -201,7 +201,7 @@ if __name__ == '__main__':
                 plt.savefig(dendro_file, format='png')
             except:
                 print(f'Unable to save {dendro_file}!')
-            # plt.show()
+            # plt.show()  # uncomment to display the plot before continuing
             plt.close()
 
     else:
