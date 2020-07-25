@@ -25,6 +25,12 @@ ZERO_PAD = 4
 SUFFIX = ".txt"
 
 
+def make_output_subdirs():
+    if not os.path.exists(args.wordpairs_dir):
+        os.makedirs(args.wordpairs_dir)
+
+
+
 # Create files of all pairs of labels per ID from a directory of label lists, with one space-separated pair per line.
 def generate_all_pairs():
     read_directory = os.fsencode(args.wordlists_dir)
@@ -32,7 +38,7 @@ def generate_all_pairs():
         filename = os.fsdecode(file)
         if filename.startswith('.'):
             continue
-        ID = filename.split("_")[0]
+        out_name = filename.split(".")[0]
         in_file = os.path.join(args.wordlists_dir, filename)
         out_file = os.path.join(args.wordpairs_dir, ID + "_pairs" + SUFFIX)
         with open(in_file, 'r') as f:
@@ -44,6 +50,5 @@ def generate_all_pairs():
 
 
 if __name__ == "__main__":
-    if (args.ID_label_file is not None):
-        split_ID_labels()
+    make_output_subdirs()
     generate_all_pairs()
