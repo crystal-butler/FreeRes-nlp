@@ -143,6 +143,10 @@ if __name__ == "__main__":
                             # Get the relatedness score, and write to the appropriate file(s).
                             for word in line.split():
                                 array.append(word)
+                            if len(array) < 2:
+                                print("Not a word pair!\n")
+                                for word in array:
+                                    print(word)
                             input_term1 = array[0]
                             input_term2 = array[1]
                             relatedness = distance(W, vocab, input_term1, input_term2)
