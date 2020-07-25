@@ -25,28 +25,6 @@ ZERO_PAD = 4
 SUFFIX = ".txt"
 
 
-# Seperate a list of <ID, label> pairs into one list of labels per ID, using ID to identify the file, and
-# create a list of ID numbers.
-def split_ID_labels():
-    with open(args.ID_label_file, 'r') as f, open(args.wordpairs_dir + "ID_list.txt", 'w') as ilist:
-        line = f.readline()
-        ID_next, label = line.rstrip().split(',')
-        ID_next = ID_next.zfill(ZERO_PAD)
-        while True:
-            ID_curr = ID_next
-            ilist.write("{}\n".format(ID_curr))
-            out_file = os.path.join(args.wordlists_dir, ID_next + "_labels" + SUFFIX)
-            with open(out_file, 'w') as o:
-                while (ID_next == ID_curr):
-                    if label != "NA":
-                        o.write("{}\n".format(label))
-                    line = f.readline()
-                    if not line:
-                        return
-                    ID_next, label = line.rstrip().split(',')
-                    ID_next = ID_next.zfill(ZERO_PAD)
-
-
 # Create files of all pairs of labels per ID from a directory of label lists, with one space-separated pair per line.
 def generate_all_pairs():
     read_directory = os.fsencode(args.wordlists_dir)
