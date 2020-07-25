@@ -118,7 +118,6 @@ def make_output_subdirs():
         os.makedirs(os.path.join(args.clustering_dir, 'Statistics/Pass'))
     if not os.path.exists(os.path.join(args.clustering_dir, 'Statistics/Fail')):
         os.makedirs(os.path.join(args.clustering_dir, 'Statistics/Fail'))
-    return
 
 
 def format_cluster_stats(cophenetic_coefficient, cluster_membership, pct):
