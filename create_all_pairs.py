@@ -40,7 +40,7 @@ def generate_all_pairs():
             continue
         out_name = filename.split(".")[0]
         in_file = os.path.join(args.wordlists_dir, filename)
-        out_file = os.path.join(args.wordpairs_dir, ID + "_pairs" + SUFFIX)
+        out_file = os.path.join(args.wordpairs_dir, out_name + "_pairs" + SUFFIX)
         with open(in_file, 'r') as f:
             label_list = [line.rstrip('\n') for line in f]
             with open(out_file, 'w') as o:
