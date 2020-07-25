@@ -1,22 +1,14 @@
 # Crystal Butler
 # 2019/03/01
-# Pre-process free response label lists for input into the relatedness scoring script, word_pair_distance.py.
-# To generate single files of labels per stimulus ID and a file listing all IDs (for use in the MATLAB clustering
-# script), use the optional --ID_label_file flag, providing it with a single file comprising IDs and labels,
-# listed in comma-separated pairs, one per line.
-# This would look like:
-# 3, happy
-# 3, enthusiastic
-# 5, depressed
-# ...
+# Pre-process free response label lists for input into the synonymy scoring script, word_pair_distance.py.
 # Any line with the string "NA" (without quotes) will be dropped.
 #
 # The required arguments are for a directory containing files of label lists, with one label per line,
-# and one file per stiumulus ID; then a directory where label pair files will be output, with one space-separated
-# label pair per line and one set of all-pairs per ID in a file. The generate_all_pairs function will keep
+# and one file per stiumulus; then a directory where label pair files will be output, with one space-separated
+# label pair per line and one set of all-pairs per stimulus in a file. The generate_all_pairs function will keep
 # duplicate labels, and will pair them as with any other label. This design allows for accurate weighting of
-# labels in word_pair_distance.py, which calculates relatedness scores for all pairs as a precursor to
-# the weighting and clustering steps in the free response label processing pipeline.
+# labels in word_pair_distance.py, which calculates synonymy scores for all pairs as a precursor to
+# the weighting and clustering steps in cluster_synonymy_scores.py.
 
 import os
 import argparse
