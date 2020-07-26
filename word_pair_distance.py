@@ -159,7 +159,10 @@ if __name__ == "__main__":
                                         f_lab.write("%s\n" % (array[1]))
                                 linecnt -= 1
                             except:
-                                print(f'Need a word pair but got: {for word in array: print(word)}')
+                                print('Need a word pair but got:')
+                                for w in array:
+                                    print(w)
+                                print(f'from file {file}')
                         # Close up shop for this round of processing.
                         f_labscr.close()
                         f_scr.close()
