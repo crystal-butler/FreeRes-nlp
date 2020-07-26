@@ -153,12 +153,12 @@ def make_output_filenames(pct, dendro_name):
 
 
 if __name__ == '__main__':
+    make_output_subdirs()
     if (os.path.isdir(args.scores_dir) and os.path.isdir(args.labels_dir) and os.path.isdir(args.clustering_dir)):
         """We are reading from one or more files containing word pair synonymy scores
         and their associated labels, clustering the distances between scores,
         generating a dendrogram and some statistics from the clustering, and writing
         that output to a file."""
-        make_output_subdirs()
         scores_files, labels_files = make_input_lists()
         for i in range(len(scores_files)):
             scores_file = os.path.join(args.scores_dir, scores_files[i])
