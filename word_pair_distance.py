@@ -143,21 +143,23 @@ if __name__ == "__main__":
                             # Get the relatedness score, and write to the appropriate file(s).
                             for word in line.split():
                                 array.append(word)
-                            input_term1 = array[0]
-                            input_term2 = array[1]
-                            relatedness = distance(W, vocab, input_term1, input_term2)
-                            if relatedness == -100:
-                                # One of the words wasn't in the vocabulary, so write to the error file.
-                                f_err.write("%s%s%s\n" % (input_term1.ljust(20), input_term2.ljust(20), relatedness))
-                            else:
-                                f_labscr.write("%s%s%s\n" % (input_term1.ljust(20), input_term2.ljust(20), relatedness))
-                                f_scr.write("%s\n" % (relatedness))
-                                if (linecnt == 1):
-                                    f_lab.write("%s\n" % (array[0]))
-                                if ((linecnt == 1) and (n_minus == 1)):
-                                    f_lab.write("%s\n" % (array[1]))
-                            linecnt -= 1
-
+                            try:
+                                input_term1 = array[0]
+                                input_term2 = array[1]
+                                relatedness = distance(W, vocab, input_term1, input_term2)
+                                if relatedness == -100:
+                                    # One of the words wasn't in the vocabulary, so write to the error file.
+                                    f_err.write("%s%s%s\n" % (input_term1.ljust(20), input_term2.ljust(20), relatedness))
+                                else:
+                                    f_labscr.write("%s%s%s\n" % (input_term1.ljust(20), input_term2.ljust(20), relatedness))
+                                    f_scr.write("%s\n" % (relatedness))
+                                    if (linecnt == 1):
+                                        f_lab.write("%s\n" % (array[0]))
+                                    if ((linecnt == 1) and (n_minus == 1)):
+                                        f_lab.write("%s\n" % (array[1]))
+                                linecnt -= 1
+                            except:
+                                print(f'Need a word pair but got: {for word in array: print(word)}')
                         # Close up shop for this round of processing.
                         f_labscr.close()
                         f_scr.close()
