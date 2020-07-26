@@ -21,8 +21,8 @@ SUFFIX = ".txt"
 
 
 def make_output_subdirs():
-    if not os.path.exists(args.wordpairs_dir):
-        os.makedirs(args.wordpairs_dir)
+    if not os.path.exists(args.sums_dir):
+        os.makedirs(args.sums_dir)
 
 
 # Create a sorted list of (label, weight) pairs from (label, label, weight) triplets.
