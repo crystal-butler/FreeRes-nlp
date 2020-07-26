@@ -30,7 +30,7 @@ def create_weights_list(file):
     filename = os.fsdecode(file)
     if filename.startswith('.'):
         return None, None
-    ID = filename.split("_")[0]
+    out_name = filename.split(".")[0]
     in_file = os.path.join(args.scored_labels_dir, filename)
     list1 = []
     list2 = []
@@ -41,12 +41,12 @@ def create_weights_list(file):
             list2.append([label2, weight])
     weights_list = list1 + list2
     weights_list.sort()
-    return ID, weights_list
+    return out_name, weights_list
 
 
 # Take a sorted list of (label, weight) pairs and sum over labels.
-def sum_weights(ID, weights_list):
-    out_file = os.path.join(args.sums_dir, ID + "_weights" + SUFFIX)
+def sum_weights(out_name, weights_list):
+    out_file = os.path.join(args.sums_dir, out_name + "_weights" + SUFFIX)
     w_sum = 0.0
     w_arr = []
     for i in range(len(weights_list)):
@@ -69,6 +69,6 @@ if __name__ == "__main__":
     make_output_subdirs()
     read_directory = os.fsencode(args.scored_labels_dir)
     for file in os.listdir(read_directory):
-        ID, weights_list = create_weights_list(file)
+        out_name, weights_list = create_weights_list(file)
         if (weights_list is not None):
-            sum_weights(ID, weights_list)
+            sum_weights(out_name, weights_list)
