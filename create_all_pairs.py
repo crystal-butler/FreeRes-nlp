@@ -30,7 +30,6 @@ def make_output_subdirs():
         os.makedirs(args.wordpairs_dir)
 
 
-
 # Create files of all pairs of labels per ID from a directory of label lists, with one space-separated pair per line.
 def generate_all_pairs():
     read_directory = os.fsencode(args.wordlists_dir)
