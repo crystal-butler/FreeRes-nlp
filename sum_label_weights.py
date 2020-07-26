@@ -20,6 +20,11 @@ ZERO_PAD = 4
 SUFFIX = ".txt"
 
 
+def make_output_subdirs():
+    if not os.path.exists(args.wordpairs_dir):
+        os.makedirs(args.wordpairs_dir)
+
+
 # Create a sorted list of (label, weight) pairs from (label, label, weight) triplets.
 def create_weights_list(file):
     filename = os.fsdecode(file)
@@ -61,6 +66,7 @@ def sum_weights(ID, weights_list):
 
 
 if __name__ == "__main__":
+    make_output_subdirs()
     read_directory = os.fsencode(args.scored_labels_dir)
     for file in os.listdir(read_directory):
         ID, weights_list = create_weights_list(file)
