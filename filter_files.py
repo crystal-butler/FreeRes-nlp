@@ -39,17 +39,30 @@ def create_filter_list():
         filename = os.fsdecode(file)
         if filename.startswith('.'):
             continue
-        out_name = filename.split(".")[0]
+        filter_name = filename.split(".")[0]
         try:
-            filter_list.append(out_name)
-            print(f"{out_name} added to filter list!")
+            filter_list.append(filter_name)
+            print(f"{filter_name} added to filter list!")
         except:
-            print(f"Unable to append {out_name} to filter list!")
+            print(f"Unable to append {filter_name} to filter list!")
+    print(f"Found {len(filter_list)} file names to check.")
     return filter_list
 
 
-# def filter_label_files(filter_list):
-#     pass
+def filter_label_files(filter_list):
+    copy_list = []
+    read_directory = os.fsencode(args.labels_dir)
+    for file in os.listdir(read_directory):
+        filename = os.fsdecode(file)
+        if filename.startswith('.'):
+            continue
+        check_name = filename.split(".")[0]
+        if (check_name in filter_list):
+            try:
+                copy_list.append(filename)
+                print(f"Found {check_name}, file {filename}, in the filter list!")
+            except:
+                print(f"Failed to copy {filename}.")
 
 
 # def filter_image_files(filter_list):
