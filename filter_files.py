@@ -10,6 +10,7 @@
 
 import os
 import argparse
+import shutil
 
 # Read in options.
 parser = argparse.ArgumentParser()
@@ -42,7 +43,6 @@ def create_filter_list():
         filter_name = filename.split(".")[0]
         try:
             filter_list.append(filter_name)
-            print(f"{filter_name} added to filter list!")
         except:
             print(f"Unable to append {filter_name} to filter list!")
     print(f"Found {len(filter_list)} file names to check.")
@@ -60,9 +60,12 @@ def filter_label_files(filter_list):
         if (check_name in filter_list):
             try:
                 copy_list.append(filename)
-                print(f"Found {check_name}, file {filename}, in the filter list!")
+                copy_file = os.path.join(args.labels_dir, filename)
+                shutil.copy2(copy_file, args.labels_out)
             except:
                 print(f"Failed to copy {filename}.")
+    print(f"Matched {len(copy_list)} files.")
+    assert len(copy_list) == len(filter_list)
 
 
 # def filter_image_files(filter_list):
@@ -71,7 +74,6 @@ def filter_label_files(filter_list):
 
 if __name__ == "__main__":
     make_output_subdirs()
-    print("Done!")
     filter_list = create_filter_list()
-    # filter_label_files(filter_list)
+    filter_label_files(filter_list)
     # filter_image_files(filter_list)
