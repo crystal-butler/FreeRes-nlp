@@ -30,3 +30,8 @@ def make_output_subdirs():
         os.makedirs(args.wordpairs_dir)
     if not os.path.exists(args.images_out):
         os.makedirs(args.wordpairs_dir)
+
+
+if __name__ == "__main__":
+    make_output_subdirs()
+    print("Done!")
