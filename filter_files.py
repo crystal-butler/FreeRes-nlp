@@ -27,17 +27,22 @@ SUFFIX = ".txt"
 
 def make_output_subdirs():
     if not os.path.exists(args.labels_out):
-        os.makedirs(args.wordpairs_dir)
+        os.makedirs(args.labels_out)
     if not os.path.exists(args.images_out):
-        os.makedirs(args.wordpairs_dir)
+        os.makedirs(args.images_out)
 
 
-filter_label_files(filter_list):
-    pass
+def create_filter_list():
+    filter_list = []
+    return filter_list
 
 
-filter_image_files(filter_list):
-    pass
+# def filter_label_files(filter_list):
+#     pass
+
+
+# def filter_image_files(filter_list):
+#     pass
 
 
 if __name__ == "__main__":
