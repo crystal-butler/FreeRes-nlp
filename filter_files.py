@@ -21,10 +21,10 @@ args = parser.parse_args()
 
 
 def make_output_subdirs():
-    if not os.path.exists(args.labels_out):
-        os.makedirs(args.labels_out)
-    if not os.path.exists(args.images_out):
-        os.makedirs(args.images_out)
+    if not os.path.exists(args.in_dir):
+        os.makedirs(args.in_dir)
+    if not os.path.exists(args.out_dir):
+        os.makedirs(args.out_dir)
 
 
 def create_filter_list():
