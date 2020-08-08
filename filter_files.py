@@ -27,22 +27,51 @@ SUFFIX = ".txt"
 
 def make_output_subdirs():
     if not os.path.exists(args.labels_out):
-        os.makedirs(args.wordpairs_dir)
+        os.makedirs(args.labels_out)
     if not os.path.exists(args.images_out):
-        os.makedirs(args.wordpairs_dir)
+        os.makedirs(args.images_out)
 
 
-filter_label_files(filter_list):
-    pass
+def create_filter_list():
+    filter_list = []
+    read_directory = os.fsencode(args.filter_dir)
+    for file in os.listdir(read_directory):
+        filename = os.fsdecode(file)
+        if filename.startswith('.'):
+            continue
+        filter_name = filename.split(".")[0]
+        try:
+            filter_list.append(filter_name)
+            print(f"{filter_name} added to filter list!")
+        except:
+            print(f"Unable to append {filter_name} to filter list!")
+    print(f"Found {len(filter_list)} file names to check.")
+    return filter_list
 
 
-filter_image_files(filter_list):
-    pass
+def filter_label_files(filter_list):
+    copy_list = []
+    read_directory = os.fsencode(args.labels_dir)
+    for file in os.listdir(read_directory):
+        filename = os.fsdecode(file)
+        if filename.startswith('.'):
+            continue
+        check_name = filename.split(".")[0]
+        if (check_name in filter_list):
+            try:
+                copy_list.append(filename)
+                print(f"Found {check_name}, file {filename}, in the filter list!")
+            except:
+                print(f"Failed to copy {filename}.")
+
+
+# def filter_image_files(filter_list):
+#     pass
 
 
 if __name__ == "__main__":
     make_output_subdirs()
     print("Done!")
     filter_list = create_filter_list()
-    filter_label_files(filter_list)
-    filter_image_files(filter_list)
+    # filter_label_files(filter_list)
+    # filter_image_files(filter_list)
