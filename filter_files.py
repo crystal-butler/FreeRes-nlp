@@ -34,6 +34,17 @@ def make_output_subdirs():
 
 def create_filter_list():
     filter_list = []
+    read_directory = os.fsencode(args.filter_dir)
+    for file in os.listdir(read_directory):
+        filename = os.fsdecode(file)
+        if filename.startswith('.'):
+            continue
+        out_name = filename.split(".")[0]
+        try:
+            filter_list.append(out_name)
+            print(f"{out_name} added to filter list!")
+        except:
+            print(f"Unable to append {out_name} to filter list!")
     return filter_list
 
 
@@ -49,5 +60,5 @@ if __name__ == "__main__":
     make_output_subdirs()
     print("Done!")
     filter_list = create_filter_list()
-    filter_label_files(filter_list)
-    filter_image_files(filter_list)
+    # filter_label_files(filter_list)
+    # filter_image_files(filter_list)
