@@ -21,10 +21,6 @@ parser.add_argument('labels_out', help='directory that matching label lists will
 parser.add_argument('images_out', help='directory that matching images will be copied to', type=str)
 args = parser.parse_args()
 
-# Constants, used to format output file names.
-ZERO_PAD = 4
-SUFFIX = ".txt"
-
 
 def make_output_subdirs():
     if not os.path.exists(args.labels_out):
@@ -72,4 +68,5 @@ if __name__ == "__main__":
     make_output_subdirs()
     filter_list = create_filter_list()
     filter_files(filter_list, args.labels_dir, args.labels_out)
-    # filter_image_files(filter_list)
+    filter_files(filter_list, args.images_dir, args.images_out)
+
