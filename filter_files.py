@@ -49,9 +49,9 @@ def create_filter_list():
     return filter_list
 
 
-def filter_label_files(filter_list):
+def filter_files(filter_list, in_dir, out_dir):
     copy_list = []
-    read_directory = os.fsencode(args.labels_dir)
+    read_directory = os.fsencode(in_dir)
     for file in os.listdir(read_directory):
         filename = os.fsdecode(file)
         if filename.startswith('.'):
@@ -60,20 +60,16 @@ def filter_label_files(filter_list):
         if (check_name in filter_list):
             try:
                 copy_list.append(filename)
-                copy_file = os.path.join(args.labels_dir, filename)
-                shutil.copy2(copy_file, args.labels_out)
+                copy_file = os.path.join(in_dir, filename)
+                shutil.copy2(copy_file, out_dir)
             except:
                 print(f"Failed to copy {filename}.")
     print(f"Matched {len(copy_list)} files.")
     assert len(copy_list) == len(filter_list)
 
 
-# def filter_image_files(filter_list):
-#     pass
-
-
 if __name__ == "__main__":
     make_output_subdirs()
     filter_list = create_filter_list()
-    filter_label_files(filter_list)
+    filter_files(filter_list, args.labels_dir, args.labels_out)
     # filter_image_files(filter_list)
