@@ -32,6 +32,17 @@ def make_output_subdirs():
         os.makedirs(args.wordpairs_dir)
 
 
+filter_label_files(filter_list):
+    pass
+
+
+filter_image_files(filter_list):
+    pass
+
+
 if __name__ == "__main__":
     make_output_subdirs()
     print("Done!")
+    filter_list = create_filter_list()
+    filter_label_files(filter_list)
+    filter_image_files(filter_list)
