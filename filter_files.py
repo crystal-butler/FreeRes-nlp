@@ -5,8 +5,8 @@
 # This script is used to match the image and label files to dendrograms that pass
 # the clustering test applied in cluster_synonymy_scores.py. It uses the names of
 # files in the Dendrograms/Pass directory as a filter. The label and image files
-# must have the same suffix as the dendrogram files for the script to work.
-# Matching image and label files are copied to the specified directories.
+# must have the same prefix as the dendrogram files for the script to work.
+# Matching files are copied to the specified directory.
 
 import os
 import argparse
@@ -15,18 +15,16 @@ import shutil
 # Read in options.
 parser = argparse.ArgumentParser()
 parser.add_argument('filter_dir', help='directory of files to be matched', type=str)
-parser.add_argument('labels_dir', help='directory of label lists to filter against filter_dir', type=str)
-parser.add_argument('images_dir', help='directory of images to filter against filter_dir', type=str)
-parser.add_argument('labels_out', help='directory that matching label lists will be copied to', type=str)
-parser.add_argument('images_out', help='directory that matching images will be copied to', type=str)
+parser.add_argument('in_dir', help='directory of files to filter against filter_dir', type=str)
+parser.add_argument('out_dir', help='directory that matching files are copied to', type=str)
 args = parser.parse_args()
 
 
 def make_output_subdirs():
-    if not os.path.exists(args.labels_out):
-        os.makedirs(args.labels_out)
-    if not os.path.exists(args.images_out):
-        os.makedirs(args.images_out)
+    if not os.path.exists(args.in_dir):
+        os.makedirs(args.in_dir)
+    if not os.path.exists(args.out_dir):
+        os.makedirs(args.out_dir)
 
 
 def create_filter_list():
@@ -67,6 +65,5 @@ def filter_files(filter_list, in_dir, out_dir):
 if __name__ == "__main__":
     make_output_subdirs()
     filter_list = create_filter_list()
-    filter_files(filter_list, args.labels_dir, args.labels_out)
-    filter_files(filter_list, args.images_dir, args.images_out)
+    filter_files(filter_list, args.in_dir, args.out_dir)
 
