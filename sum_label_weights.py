@@ -46,7 +46,7 @@ def create_weights_list(file):
 
 # Take a sorted list of (label, weight) pairs and sum over labels.
 def sum_weights(out_name, weights_list):
-    out_file = os.path.join(args.sums_dir, out_name + "_weights" + SUFFIX)
+    out_file = os.path.join(args.sums_dir, out_name + ".weights" + SUFFIX)
     w_sum = 0.0
     w_arr = []
     for i in range(len(weights_list)):
