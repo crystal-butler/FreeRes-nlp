@@ -120,9 +120,9 @@ if __name__ == "__main__":
                     if not ((file.startswith('.')) or (file == "ID_list.txt")):
                         # Get all our needed files open for business.
                         f_in = open(subdir + '/' + file, 'r')
-                        f_err = open(err + ID + "_errors.txt", 'w')
-                        f_lab = open(lab + ID + "_labels.txt", 'w')
-                        f_scr = open(scr + ID + "_scores.txt", 'w')
+                        f_err = open(err + ID + ".errors.txt", 'w')
+                        f_lab = open(lab + ID + ".labels.txt", 'w')
+                        f_scr = open(scr + ID + ".scores.txt", 'w')
                         f_labscr = open(labscr + ID + ".txt", 'w')
 
                         # Calculate n-1 for original number of labels used to generate the all-pairs list.
