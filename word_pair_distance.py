@@ -33,18 +33,18 @@ args = parser.parse_args()
 
 if (args.output_dir is not None):
     # Set up directories for our output files, if need be.
-    if not os.path.exists(args.output_dir + "Errors"):
-        os.makedirs(args.output_dir + "Errors")
-    err = args.output_dir + "Errors/"
-    if not os.path.exists(args.output_dir + "Label_Lists"):
-        os.makedirs(args.output_dir + "Label_Lists")
-    lab = args.output_dir + "Label_Lists/"
-    if not os.path.exists(args.output_dir + "Label_and_Score_Lists"):
-        os.makedirs(args.output_dir + "Label_and_Score_Lists")
-    labscr = args.output_dir + "Label_and_Score_Lists/"
-    if not os.path.exists(args.output_dir + "Score_Lists"):
-        os.makedirs(args.output_dir + "Score_Lists")
-    scr = args.output_dir + "Score_Lists/"
+    if not os.path.exists(args.output_dir + "/Errors"):
+        os.makedirs(args.output_dir + "/Errors")
+    err = args.output_dir + "/Errors/"
+    if not os.path.exists(args.output_dir + "/Label_Lists"):
+        os.makedirs(args.output_dir + "/Label_Lists")
+    lab = args.output_dir + "/Label_Lists/"
+    if not os.path.exists(args.output_dir + "/Label_and_Score_Lists"):
+        os.makedirs(args.output_dir + "/Label_and_Score_Lists")
+    labscr = args.output_dir + "/Label_and_Score_Lists/"
+    if not os.path.exists(args.output_dir + "/Score_Lists"):
+        os.makedirs(args.output_dir + "/Score_Lists")
+    scr = args.output_dir + "/Score_Lists/"
 
 
 def generate():
