@@ -37,13 +37,13 @@ def make_input_lists():
     if (len(dendros_files) < 1 or len(labels_weights_files) < 1 or len(images_files) < 1):
         print ("One of the input file lists is empty: quitting!")
         sys.exit()
-    if (len(dendros_files) != len(labels_weights_files) or len(dendros_files) != len(images_files)):
-        print("The input file lists are not the same length: quitting!")
+    if (len(dendros_files) != len(labels_weights_files)):
+        print("The dendrogram and label_weights file lists are not the same length: quitting!")
         sys.exit()
     return dendros_files, labels_weights_files, images_files
 
 def get_csv_values():
-    aus_weights_vals = pd.read_csv(args.aus_weights)
+    aus_weights_vals = pd.read_csv(args.aus_weights, header=1)
     return aus_weights_vals
 
 def make_arrays(scores_path, labels_path):
@@ -161,7 +161,7 @@ if __name__ == '__main__':
         aus_weights_vals = get_csv_values()
         index = aus_weights_vals.index
         row_count = len(index)
-        assert row_count == len(dendros_files)
+        
         # for i in range(len(dendros_files)):
         #     dendros_file = os.path.join(args.dendros_dir, dendros_files[i])
         #     labels_weights_file = os.path.join(args.labels_weights_dir, labels_weights_files[i])
