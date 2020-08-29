@@ -159,50 +159,53 @@ if __name__ == '__main__':
         by iteratively compiling one entry from each source per entry."""
         dendros_files, labels_weights_files, images_files = make_input_lists()
         aus_weights_vals = get_csv_values()
-        
-        for i in range(len(dendros_files)):
-            dendros_file = os.path.join(args.dendros_dir, dendros_files[i])
-            labels_weights_file = os.path.join(args.labels_weights_dir, labels_weights_files[i])
-            images_file = os.path.join(args.images_dir, images_files[i])
-            distances_array, labels_array = make_arrays(scores_file, labels_file)
-            expected_distances_count = check_expected_distances_count(labels_array)
-            if (expected_distances_count != len(distances_array)):
-                print(f'The number of values in the {scores_file} distances list is {len(distances_array)}, but it should be {expected_distances_count}.')
-                input("Press Enter to continue...")
-                continue
+        index = aus_weights_vals.index
+        row_count = len(index)
+        assert row_count == len(dendros_files)
+        # for i in range(len(dendros_files)):
+        #     dendros_file = os.path.join(args.dendros_dir, dendros_files[i])
+        #     labels_weights_file = os.path.join(args.labels_weights_dir, labels_weights_files[i])
+        #     images_file = os.path.join(args.images_dir, images_files[i])
+        #     distances_array, labels_array = make_arrays(scores_file, labels_file)
+        #     expected_distances_count = check_expected_distances_count(labels_array)
+        #     if (expected_distances_count != len(distances_array)):
+        #         print(f'The number of values in the {scores_file} distances list is {len(distances_array)}, but it should be {expected_distances_count}.')
+        #         input("Press Enter to continue...")
+        #         continue
             
-            linkage_matrix = build_linkage_matrix(distances_array)
-            assert (linkage_matrix.shape[0] + 1) == (len(labels_array)), "The linkage matrix and labels array have mismatched lengths."
-            cophenetic_coefficient, cluster_membership, pct = calculate_cluster_stats(linkage_matrix, distances_array)
-            stats_printout = format_cluster_stats(cophenetic_coefficient, cluster_membership, pct)
+        #     linkage_matrix = build_linkage_matrix(distances_array)
+        #     assert (linkage_matrix.shape[0] + 1) == (len(labels_array)), "The linkage matrix and labels array have mismatched lengths."
+        #     cophenetic_coefficient, cluster_membership, pct = calculate_cluster_stats(linkage_matrix, distances_array)
+        #     stats_printout = format_cluster_stats(cophenetic_coefficient, cluster_membership, pct)
 
-            # Title the dendrogram, using the labels file name.
-            dendro_name = extract_dendro_name(labels_file, scores_file)
-            # Set up the plot.
-            fig, ax = plt.subplots(figsize=(14, 8.5))  #(width, height) in inches
-            title = "Image: " + dendro_name
-            plt.title(title, fontsize=18)
-            plt.rc('ytick',labelsize=14)
-            y_label = 'Cophenetic Coefficient (Cutoff: ' + str(args.dendro_cutoff) + ')'
-            plt.ylabel(y_label, fontsize=16)
-            plt.axhline(y=args.dendro_cutoff, color="grey", linestyle="--")
-            # plt.figtext(0.02, 0.12, stats_printout, horizontalalignment='left', verticalalignment='center', fontsize=14)
-            plt.subplots_adjust(bottom=0.22, top=0.95, right=0.98, left=0.06)
-            # Create the dendrogram, with a cutoff specified during module invocation.
-            dendro = sch.dendrogram(linkage_matrix, labels=labels_array, color_threshold=args.dendro_cutoff, \
-                leaf_font_size=14, leaf_rotation=70, count_sort='ascending', ax=ax)
-            ax.set_ylim(0, 1)
+        #     # Title the dendrogram, using the labels file name.
+        #     dendro_name = extract_dendro_name(labels_file, scores_file)
+        #     # Set up the plot.
+        #     fig, ax = plt.subplots(figsize=(14, 8.5))  #(width, height) in inches
+        #     title = "Image: " + dendro_name
+        #     plt.title(title, fontsize=18)
+        #     plt.rc('ytick',labelsize=14)
+        #     y_label = 'Cophenetic Coefficient (Cutoff: ' + str(args.dendro_cutoff) + ')'
+        #     plt.ylabel(y_label, fontsize=16)
+        #     plt.axhline(y=args.dendro_cutoff, color="grey", linestyle="--")
+        #     # plt.figtext(0.02, 0.12, stats_printout, horizontalalignment='left', verticalalignment='center', fontsize=14)
+        #     plt.subplots_adjust(bottom=0.22, top=0.95, right=0.98, left=0.06)
+        #     # Create the dendrogram, with a cutoff specified during module invocation.
+        #     dendro = sch.dendrogram(linkage_matrix, labels=labels_array, color_threshold=args.dendro_cutoff, \
+        #         leaf_font_size=14, leaf_rotation=70, count_sort='ascending', ax=ax)
+        #     ax.set_ylim(0, 1)
 
-            # Save out the plot and statistics.
-            dendro_file, stats_file = make_output_filenames(pct, dendro_name)
-            with open(stats_file, 'w') as f_stat:
-                f_stat.write(stats_printout)
-            try:
-                plt.savefig(dendro_file, format='png')
-            except:
-                print(f'Unable to save {dendro_file}!')
-            # plt.show()  # uncomment to display the plot before continuing
-            plt.close()
+        #     # Save out the plot and statistics.
+        #     dendro_file, stats_file = make_output_filenames(pct, dendro_name)
+        #     with open(stats_file, 'w') as f_stat:
+        #         f_stat.write(stats_printout)
+        #     try:
+        #         plt.savefig(dendro_file, format='png')
+        #     except:
+        #         print(f'Unable to save {dendro_file}!')
+        #     # plt.show()  # uncomment to display the plot before continuing
+        #     plt.close()
 
     else:
-        print("Be sure to include options for scores, labels and output directories when calling this module.")
+        print("Be sure to include options for the dendrogram directory, labels and weights directory, \
+            images directory, AUs and weights file and output directory when calling this module.")
