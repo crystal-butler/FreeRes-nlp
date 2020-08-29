@@ -14,7 +14,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('dendros_dir', help='full path to a directory containing dendrograms that passed the clustering test', type=str)
 parser.add_argument('labels_weights_dir', help='full path to a directory containing summed labels weights', type=str)
 parser.add_argument('images_dir', help='full path to a directory of facial expression images', type=str)
-parser.add_argument('AUs_weights', help='full path to a CSV file containing AUs and weights', type=str)
+parser.add_argument('aus_weights', help='full path to a CSV file containing AUs and weights', type=str)
 parser.add_argument('output_dir', help='full path to a directory where lexicon pages will be written', type=str)
 args = parser.parse_args()
 
@@ -42,6 +42,9 @@ def make_input_lists():
         sys.exit()
     return dendros_files, labels_weights_files, images_files
 
+def get_csv_values():
+    aus_weights_vals = pd.read_csv(args.aus_weights)
+    return aus_weights_vals
 
 def make_arrays(scores_path, labels_path):
     """Read scores and labels in from files. Convert them to ndarrays for clustering.
@@ -148,12 +151,15 @@ def make_output_filenames(pct, dendro_name):
 
 if __name__ == '__main__':
     make_output_dir()
-    if (os.path.isdir(args.dendros_dir) and os.path.isdir(args.labels_weights_dir) and os.path.isdir(args.images_dir)):
+    if (os.path.isdir(args.dendros_dir) and os.path.isdir(args.labels_weights_dir) and os.path.isdir(args.images_dir) \
+        and os.path.isfile(args.aus_weights)):
         """We are pulling dendrogram, summed label weight and synthetic facial expression
         image files and matching them with lines from a CSV file that documents the
         generative parameters for the expressions. Lexicon entries are created
         by iteratively compiling one entry from each source per entry."""
         dendros_files, labels_weights_files, images_files = make_input_lists()
+        aus_weights_vals = get_csv_values()
+        
         for i in range(len(dendros_files)):
             dendros_file = os.path.join(args.dendros_dir, dendros_files[i])
             labels_weights_file = os.path.join(args.labels_weights_dir, labels_weights_files[i])
