@@ -148,15 +148,16 @@ def make_output_filenames(pct, dendro_name):
 
 if __name__ == '__main__':
     make_output_dir()
-    if (os.path.isdir(args.scores_dir) and os.path.isdir(args.labels_dir) and os.path.isdir(args.clustering_dir)):
-        """We are reading from one or more files containing word pair synonymy scores
-        and their associated labels, clustering the distances between scores,
-        generating a dendrogram and some statistics from the clustering, and writing
-        that output to a file."""
+    if (os.path.isdir(args.dendros_dir) and os.path.isdir(args.labels_weights_dir) and os.path.isdir(args.images_dir)):
+        """We are pulling dendrogram, summed label weight and synthetic facial expression
+        image files and matching them with lines from a CSV file that documents the
+        generative parameters for the expressions. Lexicon entries are created
+        by iteratively compiling one entry from each source per entry."""
         dendros_files, labels_weights_files, images_files = make_input_lists()
-        for i in range(len(scores_files)):
-            scores_file = os.path.join(args.scores_dir, scores_files[i])
-            labels_file = os.path.join(args.labels_dir, labels_files[i])
+        for i in range(len(dendros_files)):
+            dendros_file = os.path.join(args.dendros_dir, dendros_files[i])
+            labels_weights_file = os.path.join(args.labels_weights_dir, labels_weights_files[i])
+            images_file = os.path.join(args.images_dir, images_files[i])
             distances_array, labels_array = make_arrays(scores_file, labels_file)
             expected_distances_count = check_expected_distances_count(labels_array)
             if (expected_distances_count != len(distances_array)):
