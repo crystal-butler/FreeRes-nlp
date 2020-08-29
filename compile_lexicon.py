@@ -35,15 +35,15 @@ def make_input_lists():
     for entry in sorted(os.listdir(args.dendros_dir)):
         if os.path.isfile(os.path.join(args.dendros_dir, entry)):
             if not entry.startswith('.'):
-                dendros_files.append(entry)
+                dendros_files.append(os.path.join(args.dendros_dir, entry))
     for entry in sorted(os.listdir(args.labels_weights_dir)):
         if os.path.isfile(os.path.join(args.labels_weights_dir, entry)):
             if not entry.startswith('.'):
-                labels_weights_files.append(entry)
+                labels_weights_files.append(os.path.join(args.labels_weights_dir, entry))
     for entry in sorted(os.listdir(args.images_dir)):
         if os.path.isfile(os.path.join(args.images_dir, entry)):
             if not entry.startswith('.'):
-                images_files.append(entry)
+                images_files.append(os.path.join(args.images_dir, entry))
     if (len(dendros_files) < 1 or len(labels_weights_files) < 1 or len(images_files) < 1):
         print ("One of the input file lists is empty: quitting!")
         sys.exit()
@@ -177,7 +177,7 @@ if __name__ == '__main__':
         aus_weights_vals = get_csv_values()
         index = aus_weights_vals.index
         row_count = len(index)
-        print(aus_weights_vals.head())
+        # print(aus_weights_vals.head())
         image_names = extract_image_names(dendros_files)
         for image_name in image_names:
             labels_weights_file = find_labels_weights_file(image_name, labels_weights_files)
