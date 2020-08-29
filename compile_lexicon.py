@@ -43,8 +43,21 @@ def make_input_lists():
     return dendros_files, labels_weights_files, images_files
 
 def get_csv_values():
-    aus_weights_vals = pd.read_csv(args.aus_weights, header=1)
+    aus_weights_vals = pd.read_csv(args.aus_weights)
     return aus_weights_vals
+
+
+def extract_image_names(dendros_files):
+    image_names = []
+    for file in dendros_files:
+        file_name = os.path.basename(file)
+        print(file_name)
+        image_name = file_name.split('.')[0]
+        print(image_name)
+        image_names.append(image_name)
+    assert len(dendros_files) == len(image_names), \
+        "Dendros list has %r members and image name list has %r members!" % (len(dendros), len(image_names))
+    return image_names
 
 def make_arrays(scores_path, labels_path):
     """Read scores and labels in from files. Convert them to ndarrays for clustering.
@@ -81,15 +94,6 @@ def build_linkage_matrix(distances_array):
         if linkage_matrix[i][2] < 0:
             linkage_matrix[i][2] = 0
     return linkage_matrix
-
-
-def extract_dendro_name(labels_file, scores_file):
-    labels_name = os.path.basename(labels_file)
-    scores_name = os.path.basename(scores_file)
-    labels_prefix = labels_name.split('_')[0]
-    scores_prefix = scores_name.split('_')[0]
-    assert labels_prefix == scores_prefix, "Labels and scores should have the same file name prefix."
-    return labels_prefix
 
 
 def calculate_cluster_stats(linkage_matrix, distances_array):
@@ -161,7 +165,8 @@ if __name__ == '__main__':
         aus_weights_vals = get_csv_values()
         index = aus_weights_vals.index
         row_count = len(index)
-        
+        print(aus_weights_vals.head())
+        image_names = extract_image_names(dendros_files)
         # for i in range(len(dendros_files)):
         #     dendros_file = os.path.join(args.dendros_dir, dendros_files[i])
         #     labels_weights_file = os.path.join(args.labels_weights_dir, labels_weights_files[i])
