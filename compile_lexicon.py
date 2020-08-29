@@ -13,29 +13,34 @@ import matplotlib.pyplot as plt
 parser = argparse.ArgumentParser()
 parser.add_argument('dendros_dir', help='full path to a directory containing dendrograms that passed the clustering test', type=str)
 parser.add_argument('labels_weights_dir', help='full path to a directory containing summed labels weights', type=str)
-parser.add_argument('image_dir', help='full path to a directory of facial expression images', type=str)
+parser.add_argument('images_dir', help='full path to a directory of facial expression images', type=str)
 parser.add_argument('AUs_weights', help='full path to a CSV file containing AUs and weights', type=str)
 parser.add_argument('output_dir', help='full path to a directory where lexicon pages will be written', type=str)
 args = parser.parse_args()
 
 def make_input_lists():
-    scores_files = []
-    labels_files = []
-    for entry in sorted(os.listdir(args.scores_dir)):
-        if os.path.isfile(os.path.join(args.scores_dir, entry)):
+    dendros_files = []
+    labels_weights_files = []
+    images_files = []
+    for entry in sorted(os.listdir(args.dendros_dir)):
+        if os.path.isfile(os.path.join(args.dendros_dir, entry)):
             if not entry.startswith('.'):
-                scores_files.append(entry)
-    for entry in sorted(os.listdir(args.labels_dir)):
-        if os.path.isfile(os.path.join(args.labels_dir, entry)):
+                dendros_files.append(entry)
+    for entry in sorted(os.listdir(args.labels_weights_dir)):
+        if os.path.isfile(os.path.join(args.labels_weights_dir, entry)):
             if not entry.startswith('.'):
-                labels_files.append(entry)
-    if (len(scores_files) < 1 or len(labels_files) < 1):
-        print ("Either scores or labels file list is empty: quitting!")
+                labels_weights_files.append(entry)
+    for entry in sorted(os.listdir(args.images_dir)):
+        if os.path.isfile(os.path.join(args.images_dir, entry)):
+            if not entry.startswith('.'):
+                images_files.append(entry)
+    if (len(dendros_files) < 1 or len(labels_weights_files) < 1 or len(images_files) < 1):
+        print ("One of the input file lists is empty: quitting!")
         sys.exit()
-    if (len(scores_files) != len(labels_files)):
-        print("The number of scores files doesn't match the number of labels files: quitting!")
+    if (len(dendros_files) != len(labels_weights_files) or len(dendros_files) != len(images_files)):
+        print("The input file lists are not the same length: quitting!")
         sys.exit()
-    return scores_files, labels_files
+    return dendros_files, labels_weights_files, images_files
 
 
 def make_arrays(scores_path, labels_path):
@@ -156,7 +161,7 @@ if __name__ == '__main__':
         and their associated labels, clustering the distances between scores,
         generating a dendrogram and some statistics from the clustering, and writing
         that output to a file."""
-        scores_files, labels_files = make_input_lists()
+        dendros_files, labels_weights_files, images_files = make_input_lists()
         for i in range(len(scores_files)):
             scores_file = os.path.join(args.scores_dir, scores_files[i])
             labels_file = os.path.join(args.labels_dir, labels_files[i])
