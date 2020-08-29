@@ -109,17 +109,9 @@ def calculate_cluster_stats(linkage_matrix, distances_array):
     return cophenetic_coefficient, cluster_membership, pct
 
 
-def make_output_subdirs():
-    if not os.path.exists(args.clustering_dir):
+def make_output_dir():
+    if not os.path.exists(args.output_dir):
         os.makedirs(args.clustering_dir)
-    if not os.path.exists(os.path.join(args.clustering_dir, 'Dendrograms/Pass')):
-        os.makedirs(os.path.join(args.clustering_dir, 'Dendrograms/Pass'))
-    if not os.path.exists(os.path.join(args.clustering_dir, 'Dendrograms/Fail')):
-        os.makedirs(os.path.join(args.clustering_dir, 'Dendrograms/Fail'))
-    if not os.path.exists(os.path.join(args.clustering_dir, 'Statistics/Pass')):
-        os.makedirs(os.path.join(args.clustering_dir, 'Statistics/Pass'))
-    if not os.path.exists(os.path.join(args.clustering_dir, 'Statistics/Fail')):
-        os.makedirs(os.path.join(args.clustering_dir, 'Statistics/Fail'))
 
 
 def format_cluster_stats(cophenetic_coefficient, cluster_membership, pct):
@@ -155,7 +147,7 @@ def make_output_filenames(pct, dendro_name):
 
 
 if __name__ == '__main__':
-    make_output_subdirs()
+    make_output_dir()
     if (os.path.isdir(args.scores_dir) and os.path.isdir(args.labels_dir) and os.path.isdir(args.clustering_dir)):
         """We are reading from one or more files containing word pair synonymy scores
         and their associated labels, clustering the distances between scores,
