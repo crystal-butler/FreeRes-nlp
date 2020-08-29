@@ -10,13 +10,23 @@ import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
 
+DENDRO_EXT = ".jpg"
+WEIGHTS_EXT = ".weights.txt"
+IMAGE_EXT = ".png"
+
 parser = argparse.ArgumentParser()
 parser.add_argument('dendros_dir', help='full path to a directory containing dendrograms that passed the clustering test', type=str)
 parser.add_argument('labels_weights_dir', help='full path to a directory containing summed labels weights', type=str)
 parser.add_argument('images_dir', help='full path to a directory of facial expression images', type=str)
 parser.add_argument('aus_weights', help='full path to a CSV file containing AUs and weights', type=str)
-parser.add_argument('output_dir', help='full path to a directory where lexicon pages will be written', type=str)
+parser.add_argument('lexicon_dir', help='full path to a directory where lexicon pages will be written', type=str)
 args = parser.parse_args()
+
+
+def make_output_dir():
+    if not os.path.exists(args.lexicon_dir):
+        os.makedirs(args.lexicon_dir)
+
 
 def make_input_lists():
     dendros_files = []
@@ -42,6 +52,7 @@ def make_input_lists():
         sys.exit()
     return dendros_files, labels_weights_files, images_files
 
+
 def get_csv_values():
     aus_weights_vals = pd.read_csv(args.aus_weights)
     return aus_weights_vals
@@ -51,13 +62,19 @@ def extract_image_names(dendros_files):
     image_names = []
     for file in dendros_files:
         file_name = os.path.basename(file)
-        print(file_name)
         image_name = file_name.split('.')[0]
-        print(image_name)
         image_names.append(image_name)
     assert len(dendros_files) == len(image_names), \
-        "Dendros list has %r members and image name list has %r members!" % (len(dendros), len(image_names))
+        "Dendros list has %r members and image name list has %r members!" % (len(dendros_files), len(image_names))
     return image_names
+
+
+def find_labels_weights_file(image_name, labels_weights_files):
+    for labels_weights_file in labels_weights_files:
+        if (image_name + WEIGHTS_EXT) in os.path.basename(labels_weights_file):
+            return labels_weights_file
+    print(f'uh-oh, image {image_name} not found in labels_weights_files list!')
+
 
 def make_arrays(scores_path, labels_path):
     """Read scores and labels in from files. Convert them to ndarrays for clustering.
@@ -116,11 +133,6 @@ def calculate_cluster_stats(linkage_matrix, distances_array):
     return cophenetic_coefficient, cluster_membership, pct
 
 
-def make_output_dir():
-    if not os.path.exists(args.output_dir):
-        os.makedirs(args.clustering_dir)
-
-
 def format_cluster_stats(cophenetic_coefficient, cluster_membership, pct):
     """Pretty print layout for clustering statistics; can be appended to the dendrogram or saved out as a file."""
     stats_printout = '---------------------------------------------------------------------------------\n'
@@ -167,6 +179,9 @@ if __name__ == '__main__':
         row_count = len(index)
         print(aus_weights_vals.head())
         image_names = extract_image_names(dendros_files)
+        for image_name in image_names:
+            labels_weights_file = find_labels_weights_file(image_name, labels_weights_files)
+            print(labels_weights_file)
         # for i in range(len(dendros_files)):
         #     dendros_file = os.path.join(args.dendros_dir, dendros_files[i])
         #     labels_weights_file = os.path.join(args.labels_weights_dir, labels_weights_files[i])
