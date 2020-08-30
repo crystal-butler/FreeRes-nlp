@@ -54,7 +54,10 @@ def make_input_lists():
 
 
 def get_csv_values():
-    aus_weights_vals = pd.read_csv(args.aus_weights)
+    aus_weights_vals = pd.read_csv(args.aus_weights, dtype=str)
+    index_column = aus_weights_vals.columns.values[0]
+    # print(index_column)
+    aus_weights_vals.set_index(index_column, inplace=True)
     return aus_weights_vals
 
 
@@ -96,6 +99,20 @@ def find_images_file(image_name, images_files):
         if (image_name + IMAGE_EXT) in os.path.basename(images_file):
             return images_file
     print(f'uh-oh, image {image_name} not found in images_files list!')
+
+
+def get_image_record(image_name, aus_weights_vals):
+    image_record = aus_weights_vals.loc[image_name]
+    return image_record
+
+
+def print_image_record(image_record):
+    for i in range(len(image_record)):
+        print('{:>10}'.format(image_record.index[i]), end='')
+    print()
+    for i in range(len(image_record)):
+        print('{:>10}'.format(image_record.values[i]), end='')
+    print('\n')
 
 
 def make_arrays(scores_path, labels_path):
@@ -197,20 +214,22 @@ if __name__ == '__main__':
         by iteratively compiling one entry from each source per entry."""
         dendros_files, labels_weights_files, images_files = make_input_lists()
         aus_weights_vals = get_csv_values()
-        index = aus_weights_vals.index
-        row_count = len(index)
+        # index = aus_weights_vals.index
+        # row_count = len(index)
         # print(aus_weights_vals.head())
+        # print(aus_weights_vals.columns.values[0])
         image_names = extract_image_names(dendros_files)
         for image_name in image_names:
             dendros_file = find_dendros_file(image_name, dendros_files)
-            print(dendros_file)
+            # print(dendros_file)
             labels_weights_file = find_labels_weights_file(image_name, labels_weights_files)
             # print(labels_weights_file)
             label, weight = get_label_weight(labels_weights_file)
             # print(label, weight)
             images_file = find_images_file(image_name, images_files)
             # print(images_file)
-
+            image_record = get_image_record(image_name, aus_weights_vals)
+            print_image_record(image_record)
 
         # for i in range(len(dendros_files)):
         #     dendros_file = os.path.join(args.dendros_dir, dendros_files[i])
