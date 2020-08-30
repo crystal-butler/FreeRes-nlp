@@ -7,6 +7,7 @@
 import os
 import sys
 import argparse
+import time
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.cbook as cbook
@@ -119,12 +120,17 @@ def print_image_record(image_record):
 def plot_image(images_file):
     with cbook.get_sample_data(images_file) as image_file:
         image = plt.imread(image_file)
-
     fig, ax = plt.subplots()
     im = ax.imshow(image)
-
     ax.axis('off')
-    plt.show()
+    plt.show(block=False)
+    plt.pause(1)
+    plt.close()
+
+
+def print_label_weight(label, weight):
+    print(f'Label: {label}')
+    print(f'Weight: {weight}')
 
 
 # def format_cluster_stats(cophenetic_coefficient, cluster_membership, pct):
@@ -179,7 +185,9 @@ if __name__ == '__main__':
             # print(images_file)
             image_record = get_image_record(image_name, aus_weights_vals)
             print_image_record(image_record)
+            print_label_weight(label, weight)
             plot_image(images_file)
+            
 
         # for i in range(len(dendros_files)):
         #     dendros_file = os.path.join(args.dendros_dir, dendros_files[i])
