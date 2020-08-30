@@ -76,6 +76,14 @@ def find_labels_weights_file(image_name, labels_weights_files):
     print(f'uh-oh, image {image_name} not found in labels_weights_files list!')
 
 
+def get_label_weight(labels_weights_file):
+    with open(labels_weights_file, 'r') as f:
+        top = f.readline()
+        label, weight = top.split()
+        weight = round(float(weight), 6)
+        return label, weight
+
+
 def make_arrays(scores_path, labels_path):
     """Read scores and labels in from files. Convert them to ndarrays for clustering.
     Transform similarity (proximity) scores to distances."""
@@ -182,6 +190,8 @@ if __name__ == '__main__':
         for image_name in image_names:
             labels_weights_file = find_labels_weights_file(image_name, labels_weights_files)
             print(labels_weights_file)
+            label, weight = get_label_weight(labels_weights_file)
+            print(label, weight)
         # for i in range(len(dendros_files)):
         #     dendros_file = os.path.join(args.dendros_dir, dendros_files[i])
         #     labels_weights_file = os.path.join(args.labels_weights_dir, labels_weights_files[i])
