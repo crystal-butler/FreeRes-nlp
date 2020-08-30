@@ -35,15 +35,15 @@ def make_input_lists():
     for entry in sorted(os.listdir(args.dendros_dir)):
         if os.path.isfile(os.path.join(args.dendros_dir, entry)):
             if not entry.startswith('.'):
-                dendros_files.append(entry)
+                dendros_files.append(os.path.join(args.dendros_dir, entry))
     for entry in sorted(os.listdir(args.labels_weights_dir)):
         if os.path.isfile(os.path.join(args.labels_weights_dir, entry)):
             if not entry.startswith('.'):
-                labels_weights_files.append(entry)
+                labels_weights_files.append(os.path.join(args.labels_weights_dir, entry))
     for entry in sorted(os.listdir(args.images_dir)):
         if os.path.isfile(os.path.join(args.images_dir, entry)):
             if not entry.startswith('.'):
-                images_files.append(entry)
+                images_files.append(os.path.join(args.images_dir, entry))
     if (len(dendros_files) < 1 or len(labels_weights_files) < 1 or len(images_files) < 1):
         print ("One of the input file lists is empty: quitting!")
         sys.exit()
@@ -74,6 +74,14 @@ def find_labels_weights_file(image_name, labels_weights_files):
         if (image_name + WEIGHTS_EXT) in os.path.basename(labels_weights_file):
             return labels_weights_file
     print(f'uh-oh, image {image_name} not found in labels_weights_files list!')
+
+
+def get_label_weight(labels_weights_file):
+    with open(labels_weights_file, 'r') as f:
+        top = f.readline()
+        label, weight = top.split()
+        weight = round(float(weight), 6)
+        return label, weight
 
 
 def make_arrays(scores_path, labels_path):
@@ -177,11 +185,13 @@ if __name__ == '__main__':
         aus_weights_vals = get_csv_values()
         index = aus_weights_vals.index
         row_count = len(index)
-        print(aus_weights_vals.head())
+        # print(aus_weights_vals.head())
         image_names = extract_image_names(dendros_files)
         for image_name in image_names:
             labels_weights_file = find_labels_weights_file(image_name, labels_weights_files)
             print(labels_weights_file)
+            label, weight = get_label_weight(labels_weights_file)
+            print(label, weight)
         # for i in range(len(dendros_files)):
         #     dendros_file = os.path.join(args.dendros_dir, dendros_files[i])
         #     labels_weights_file = os.path.join(args.labels_weights_dir, labels_weights_files[i])
