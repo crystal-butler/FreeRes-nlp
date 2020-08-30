@@ -10,6 +10,7 @@ import argparse
 import time
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.offsetbox import (TextArea, DrawingArea, OffsetImage, AnnotationBbox)
 import matplotlib.cbook as cbook
 
 DENDRO_EXT = ".png"
@@ -133,19 +134,68 @@ def print_label_weight(label, weight):
     print(f'Weight: {weight}')
 
 
-# def format_cluster_stats(cophenetic_coefficient, cluster_membership, pct):
-#     """Pretty print layout for clustering statistics; can be appended to the dendrogram or saved out as a file."""
-#     stats_printout = '---------------------------------------------------------------------------------\n'
-#     stats_printout += 'Agglomerative Hierarchical Clustering Statistics\n---------------------------------------------------------------------------------\n'
-#     stats_printout += ('Cophenectic correlation coefficient: ' + str(cophenetic_coefficient) + '\n')
-#     stats_printout += ('Cluster: Count\n')
-#     for key in cluster_membership.keys():
-#         stats_printout += (str(key) + ': ' + str(cluster_membership[key]) + '\n')
-#     cluster_max_membership = max(cluster_membership.items(), key=lambda x : x[1])
-#     stats_printout += ('Cluster ' + str(cluster_max_membership[0]) + ' with ' + str(cluster_max_membership[1]) + ' members has ' + str(pct) + '% of the membership.\n')
-#     pass_fail = classify_pass_fail(pct)
-#     stats_printout += ('Cluster coherence test: ' + pass_fail)
-#     return stats_printout
+def format_image_text(label, weight, image_record):
+    """Pretty print layout for the text of the lexicon plot."""
+    image_text = '-----------------------------------------------\n'
+    image_text += 'Image Label: ' + label + '\n'
+    image_text += ('Label Similarity Score: ' + str(weight) + '\n')
+    image_text += '-----------------------------------------------\n'
+    image_text += 'Action Units and Weights\n'
+    for i in range(len(image_record)):
+        image_text += '{:>10}'.format(image_record.index[i])
+    image_text += '\n'
+    for i in range(len(image_record)):
+        image_text += '{:>10}'.format(image_record.values[i])
+    image_text += '\n'
+    image_text += '-----------------------------------------------\n'
+    return image_text
+
+
+def build_plot(image_name, dendros_file, images_file, image_text):
+    # xy = [0.3, 0.55]
+    # with cbook.get_sample_data(images_file) as image_file:
+    #     image = plt.imread(image_file)
+    # fig, ax = plt.subplots()
+    # imagebox = OffsetImage(image, zoom=0.2)
+    # imagebox.image.axes = ax
+    # ab = AnnotationBbox(imagebox, xy,
+    #                     xybox=(120., -80.),
+    #                     xycoords='data',
+    #                     boxcoords="offset points",
+    #                     pad=0.5)
+    # ax.add_artist(ab)
+    with cbook.get_sample_data(images_file) as image_file:
+        image = plt.imread(image_file)
+    fig, ax = plt.subplots(figsize=(8.5, 5.5))
+    im = ax.imshow(image)
+    ax.axis('off')
+    
+    title = "Image: " + image_name
+    plt.title(title, fontsize=18)
+    # plt.rc('ytick',labelsize=14)
+    # y_label = 'Cophenetic Coefficient (Cutoff: ' + str(args.dendro_cutoff) + ')'
+    # plt.ylabel(y_label, fontsize=16)
+    # plt.axhline(y=args.dendro_cutoff, color="grey", linestyle="--")
+    plt.figtext(0.02, 0.12, image_text, horizontalalignment='right', verticalalignment='center', fontsize=14)
+    plt.subplots_adjust(bottom=0.22, top=0.95, right=0.98, left=0.06)
+    # Create the dendrogram, with a cutoff specified during module invocation.
+    plt.show(block=False)
+    plt.pause(1)
+    plt.close()
+
+
+def save_lexicon_entry(plot):
+        #     # Save out the plot and statistics.
+        #     dendro_file, stats_file = make_output_filenames(pct, dendro_name)
+        #     with open(stats_file, 'w') as f_stat:
+        #         f_stat.write(stats_printout)
+        #     try:
+        #         plt.savefig(dendro_file, format='png')
+        #     except:
+        #         print(f'Unable to save {dendro_file}!')
+    plt.show(block=False)
+    plt.pause(1)
+    plt.close()
 
 
 # def make_output_filenames(pct, dendro_name):
@@ -184,54 +234,13 @@ if __name__ == '__main__':
             images_file = find_images_file(image_name, images_files)
             # print(images_file)
             image_record = get_image_record(image_name, aus_weights_vals)
-            print_image_record(image_record)
-            print_label_weight(label, weight)
-            plot_image(images_file)
-            
+            # print_image_record(image_record)
+            # print_label_weight(label, weight)
+            # plot_image(images_file)
+            image_text = format_image_text(label, weight, image_record)
+            # print(image_text)
+            build_plot(image_name, dendros_file, images_file, image_text)
 
-        # for i in range(len(dendros_files)):
-        #     dendros_file = os.path.join(args.dendros_dir, dendros_files[i])
-        #     labels_weights_file = os.path.join(args.labels_weights_dir, labels_weights_files[i])
-        #     images_file = os.path.join(args.images_dir, images_files[i])
-        #     distances_array, labels_array = make_arrays(scores_file, labels_file)
-        #     expected_distances_count = check_expected_distances_count(labels_array)
-        #     if (expected_distances_count != len(distances_array)):
-        #         print(f'The number of values in the {scores_file} distances list is {len(distances_array)}, but it should be {expected_distances_count}.')
-        #         input("Press Enter to continue...")
-        #         continue
-            
-        #     linkage_matrix = build_linkage_matrix(distances_array)
-        #     assert (linkage_matrix.shape[0] + 1) == (len(labels_array)), "The linkage matrix and labels array have mismatched lengths."
-        #     cophenetic_coefficient, cluster_membership, pct = calculate_cluster_stats(linkage_matrix, distances_array)
-        #     stats_printout = format_cluster_stats(cophenetic_coefficient, cluster_membership, pct)
-
-        #     # Title the dendrogram, using the labels file name.
-        #     dendro_name = extract_dendro_name(labels_file, scores_file)
-        #     # Set up the plot.
-        #     fig, ax = plt.subplots(figsize=(14, 8.5))  #(width, height) in inches
-        #     title = "Image: " + dendro_name
-        #     plt.title(title, fontsize=18)
-        #     plt.rc('ytick',labelsize=14)
-        #     y_label = 'Cophenetic Coefficient (Cutoff: ' + str(args.dendro_cutoff) + ')'
-        #     plt.ylabel(y_label, fontsize=16)
-        #     plt.axhline(y=args.dendro_cutoff, color="grey", linestyle="--")
-        #     # plt.figtext(0.02, 0.12, stats_printout, horizontalalignment='left', verticalalignment='center', fontsize=14)
-        #     plt.subplots_adjust(bottom=0.22, top=0.95, right=0.98, left=0.06)
-        #     # Create the dendrogram, with a cutoff specified during module invocation.
-        #     dendro = sch.dendrogram(linkage_matrix, labels=labels_array, color_threshold=args.dendro_cutoff, \
-        #         leaf_font_size=14, leaf_rotation=70, count_sort='ascending', ax=ax)
-        #     ax.set_ylim(0, 1)
-
-        #     # Save out the plot and statistics.
-        #     dendro_file, stats_file = make_output_filenames(pct, dendro_name)
-        #     with open(stats_file, 'w') as f_stat:
-        #         f_stat.write(stats_printout)
-        #     try:
-        #         plt.savefig(dendro_file, format='png')
-        #     except:
-        #         print(f'Unable to save {dendro_file}!')
-        #     # plt.show()  # uncomment to display the plot before continuing
-        #     plt.close()
 
     else:
         print("Be sure to include options for the dendrogram directory, labels and weights directory, \
