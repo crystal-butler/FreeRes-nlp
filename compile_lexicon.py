@@ -10,9 +10,9 @@ import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
 
-DENDRO_EXT = ".jpg"
+DENDRO_EXT = ".png"
 WEIGHTS_EXT = ".weights.txt"
-IMAGE_EXT = ".png"
+IMAGE_EXT = ".jpg"
 
 parser = argparse.ArgumentParser()
 parser.add_argument('dendros_dir', help='full path to a directory containing dendrograms that passed the clustering test', type=str)
@@ -69,6 +69,13 @@ def extract_image_names(dendros_files):
     return image_names
 
 
+def find_dendros_file(image_name, dendros_files):
+    for dendros_file in dendros_files:
+        if (image_name + DENDRO_EXT) in os.path.basename(dendros_file):
+            return dendros_file
+    print(f'uh-oh, image {image_name} not found in dendros_files list!')
+
+
 def find_labels_weights_file(image_name, labels_weights_files):
     for labels_weights_file in labels_weights_files:
         if (image_name + WEIGHTS_EXT) in os.path.basename(labels_weights_file):
@@ -82,6 +89,13 @@ def get_label_weight(labels_weights_file):
         label, weight = top.split()
         weight = round(float(weight), 6)
         return label, weight
+
+
+def find_images_file(image_name, images_files):
+    for images_file in images_files:
+        if (image_name + IMAGE_EXT) in os.path.basename(images_file):
+            return images_file
+    print(f'uh-oh, image {image_name} not found in images_files list!')
 
 
 def make_arrays(scores_path, labels_path):
@@ -188,10 +202,16 @@ if __name__ == '__main__':
         # print(aus_weights_vals.head())
         image_names = extract_image_names(dendros_files)
         for image_name in image_names:
+            dendros_file = find_dendros_file(image_name, dendros_files)
+            print(dendros_file)
             labels_weights_file = find_labels_weights_file(image_name, labels_weights_files)
-            print(labels_weights_file)
+            # print(labels_weights_file)
             label, weight = get_label_weight(labels_weights_file)
-            print(label, weight)
+            # print(label, weight)
+            images_file = find_images_file(image_name, images_files)
+            # print(images_file)
+
+
         # for i in range(len(dendros_files)):
         #     dendros_file = os.path.join(args.dendros_dir, dendros_files[i])
         #     labels_weights_file = os.path.join(args.labels_weights_dir, labels_weights_files[i])
