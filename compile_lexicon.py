@@ -152,33 +152,33 @@ def format_image_text(label, weight, image_record):
 
 
 def build_plot(image_name, dendros_file, images_file, image_text):
-    # xy = [0.3, 0.55]
-    # with cbook.get_sample_data(images_file) as image_file:
-    #     image = plt.imread(image_file)
-    # fig, ax = plt.subplots()
-    # imagebox = OffsetImage(image, zoom=0.2)
-    # imagebox.image.axes = ax
-    # ab = AnnotationBbox(imagebox, xy,
-    #                     xybox=(120., -80.),
-    #                     xycoords='data',
-    #                     boxcoords="offset points",
-    #                     pad=0.5)
-    # ax.add_artist(ab)
+    # Set up the plot and subplots.
+    fig = plt.figure(figsize=(8.5, 11))
+    fig.suptitle("Image: " + image_name, fontsize=18)
+
+    # Add facial expression image to a subplot.
     with cbook.get_sample_data(images_file) as image_file:
         image = plt.imread(image_file)
-    fig, ax = plt.subplots(figsize=(8.5, 5.5))
-    im = ax.imshow(image)
-    ax.axis('off')
-    
-    title = "Image: " + image_name
-    plt.title(title, fontsize=18)
-    # plt.rc('ytick',labelsize=14)
-    # y_label = 'Cophenetic Coefficient (Cutoff: ' + str(args.dendro_cutoff) + ')'
-    # plt.ylabel(y_label, fontsize=16)
-    # plt.axhline(y=args.dendro_cutoff, color="grey", linestyle="--")
-    plt.figtext(0.02, 0.12, image_text, horizontalalignment='right', verticalalignment='center', fontsize=14)
-    plt.subplots_adjust(bottom=0.22, top=0.95, right=0.98, left=0.06)
-    # Create the dendrogram, with a cutoff specified during module invocation.
+    sub1 = fig.add_subplot(2, 2, 1)
+    sub1.axis('off')
+    plt.imshow(image)
+
+    # # Add image text to a subplot.
+    sub2 = plt.subplot(2, 2, 2)
+    sub2.axis('off')
+    sub2.text(0.1, 0.1,
+            image_text,
+            fontsize = 16,
+            ha='left')
+
+    # # Add dendrogram to a subplot.
+    with cbook.get_sample_data(dendros_file) as dendro_file:
+        dendro = plt.imread(dendro_file)
+    sub3 = fig.add_subplot(2, 2, 3)
+    sub3.axis('off')
+    plt.imshow(dendro)
+
+    # plt.subplots_adjust(bottom=0.22, top=0.95, right=0.98, left=0.06)
     plt.show(block=False)
     plt.pause(1)
     plt.close()
