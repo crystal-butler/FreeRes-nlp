@@ -134,51 +134,60 @@ def print_label_weight(label, weight):
     print(f'Weight: {weight}')
 
 
-def format_image_text(label, weight, image_record):
+def format_image_text(weight, image_record):
     """Pretty print layout for the text of the lexicon plot."""
-    image_text = '-----------------------------------------------\n'
-    image_text += 'Image Label: ' + label + '\n'
-    image_text += ('Label Similarity Score: ' + str(weight) + '\n')
-    image_text += '-----------------------------------------------\n'
-    image_text += 'Action Units and Weights\n'
-    for i in range(len(image_record)):
-        image_text += '{:>10}'.format(image_record.index[i])
+    image_text = '--------------------------------------------\n\n'
+    image_text += ('Label Similarity Score: ' + str(weight) + '\n\n')
+    image_text += '--------------------------------------------\n\n'
+    image_text += 'Action Units and Weights\n\n'
+    for i in range(0, len(image_record), 2):
+        image_text += image_record.index[i]
+        image_text += '{:>10}'.format(image_record.index[i + 1])
+        image_text += '\n'
+        image_text += image_record.values[i]
+        image_text += '{:>10}'.format(image_record.values[i + 1])
+        image_text += '\n'    
     image_text += '\n'
-    for i in range(len(image_record)):
-        image_text += '{:>10}'.format(image_record.values[i])
-    image_text += '\n'
-    image_text += '-----------------------------------------------\n'
+    image_text += '--------------------------------------------\n'
     return image_text
 
 
-def build_plot(image_name, dendros_file, images_file, image_text):
+def build_plot(label, dendros_file, images_file, image_text):
     # Set up the plot and subplots.
     fig = plt.figure(figsize=(8.5, 11))
-    fig.suptitle("Image: " + image_name, fontsize=18)
+    # fig.suptitle("Image Label: " + label, fontsize=18, ha='left')
+    fig.subplots_adjust(bottom=0.1, left=0.025, top = 0.975, right=0.975)
 
     # Add facial expression image to a subplot.
     with cbook.get_sample_data(images_file) as image_file:
         image = plt.imread(image_file)
     sub1 = fig.add_subplot(2, 2, 1)
+    # fig.subplots_adjust(top=0.95)
     sub1.axis('off')
     plt.imshow(image)
 
     # # Add image text to a subplot.
     sub2 = plt.subplot(2, 2, 2)
     sub2.axis('off')
-    sub2.text(0.1, 0.1,
+    sub2.text(0.1, 0.8,
+            "Image Label: " + label, 
+            fontsize=18,
+            va='bottom',
+            ha='left')
+    sub2.text(0.1, 0,
             image_text,
-            fontsize = 16,
+            fontsize = 10,
+            va='bottom',
             ha='left')
 
     # # Add dendrogram to a subplot.
     with cbook.get_sample_data(dendros_file) as dendro_file:
         dendro = plt.imread(dendro_file)
-    sub3 = fig.add_subplot(2, 2, 3)
+    sub3 = fig.add_subplot(2, 2, (3, 4))
     sub3.axis('off')
     plt.imshow(dendro)
 
-    # plt.subplots_adjust(bottom=0.22, top=0.95, right=0.98, left=0.06)
+    plt.subplots_adjust(bottom=0.1, top=1.0, right=0.95, left=0.01, wspace=0.1, hspace=0.1)
     plt.show(block=False)
     plt.pause(1)
     plt.close()
@@ -219,28 +228,16 @@ if __name__ == '__main__':
         by iteratively compiling one entry from each source per entry."""
         dendros_files, labels_weights_files, images_files = make_input_lists()
         aus_weights_vals = get_csv_values()
-        # index = aus_weights_vals.index
-        # row_count = len(index)
-        # print(aus_weights_vals.head())
-        # print(aus_weights_vals.columns.values[0])
         image_names = extract_image_names(dendros_files)
         for image_name in image_names:
             dendros_file = find_dendros_file(image_name, dendros_files)
-            # print(dendros_file)
             labels_weights_file = find_labels_weights_file(image_name, labels_weights_files)
-            # print(labels_weights_file)
             label, weight = get_label_weight(labels_weights_file)
-            # print(label, weight)
             images_file = find_images_file(image_name, images_files)
-            # print(images_file)
             image_record = get_image_record(image_name, aus_weights_vals)
-            # print_image_record(image_record)
-            # print_label_weight(label, weight)
-            # plot_image(images_file)
-            image_text = format_image_text(label, weight, image_record)
+            image_text = format_image_text( weight, image_record)
             # print(image_text)
-            build_plot(image_name, dendros_file, images_file, image_text)
-
+            build_plot(label, dendros_file, images_file, image_text)
 
     else:
         print("Be sure to include options for the dendrogram directory, labels and weights directory, \
