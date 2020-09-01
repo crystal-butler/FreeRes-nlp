@@ -9,6 +9,7 @@ import sys
 import argparse
 import time
 import pandas as pd
+from tabulate import tabulate
 import matplotlib.pyplot as plt
 from matplotlib.offsetbox import (TextArea, DrawingArea, OffsetImage, AnnotationBbox)
 import matplotlib.cbook as cbook
@@ -106,6 +107,7 @@ def find_images_file(image_name, images_files):
 
 def get_image_record(image_name, aus_weights_vals):
     image_record = aus_weights_vals.loc[image_name]
+    # image_record = pd.DataFrame(series).transpose()
     return image_record
 
 
@@ -136,19 +138,21 @@ def print_label_weight(label, weight):
 
 def format_image_text(weight, image_record):
     """Pretty print layout for the text of the lexicon plot."""
-    image_text = '--------------------------------------------\n\n'
+    image_text = '-------------------------------------------------\n\n'
     image_text += ('Label Similarity Score: ' + str(weight) + '\n\n')
-    image_text += '--------------------------------------------\n\n'
+    image_text += '-------------------------------------------------\n\n'
     image_text += 'Action Units and Weights\n\n'
     for i in range(0, len(image_record), 2):
         image_text += image_record.index[i]
-        image_text += '{:>10}'.format(image_record.index[i + 1])
+        image_text += '%15s' % (image_record.index[i + 1])
         image_text += '\n'
         image_text += image_record.values[i]
-        image_text += '{:>10}'.format(image_record.values[i + 1])
+        image_text += '%15s' % (image_record.values[i + 1])
         image_text += '\n'    
     image_text += '\n'
-    image_text += '--------------------------------------------\n'
+    image_text += '-------------------------------------------------\n'
+    '%10s' % ('test',)
+    # image_text += tabulate(image_record, headers='keys', tablefmt='psql')
     return image_text
 
 
@@ -178,7 +182,7 @@ def build_plot(label, dendros_file, images_file, image_text):
             image_text,
             fontsize = 10,
             va='bottom',
-            ha='left')
+            ha='left    ')
 
     # # Add dendrogram to a subplot.
     with cbook.get_sample_data(dendros_file) as dendro_file:
@@ -238,6 +242,8 @@ if __name__ == '__main__':
             image_text = format_image_text( weight, image_record)
             # print(image_text)
             build_plot(label, dendros_file, images_file, image_text)
+            # print(tabulate(image_record, headers='keys', tablefmt='psql'))
+            # print(image_record)
 
     else:
         print("Be sure to include options for the dendrogram directory, labels and weights directory, \
