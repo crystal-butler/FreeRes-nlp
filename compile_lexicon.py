@@ -143,15 +143,14 @@ def format_image_text(weight, image_record):
     image_text += '-------------------------------------------------\n\n'
     image_text += 'Action Units and Weights\n\n'
     for i in range(0, len(image_record), 2):
-        image_text += image_record.index[i]
-        image_text += '%15s' % (image_record.index[i + 1])
+        image_text += '%10s' % (str(image_record.index[i]))
+        image_text += '%10s' % (str(image_record.index[i + 1]))
         image_text += '\n'
-        image_text += image_record.values[i]
-        image_text += '%15s' % (image_record.values[i + 1])
+        image_text += '%10s' % (str(image_record.values[i]))
+        image_text += '%10s' % (str(image_record.values[i + 1]))
         image_text += '\n'    
     image_text += '\n'
     image_text += '-------------------------------------------------\n'
-    '%10s' % ('test',)
     # image_text += tabulate(image_record, headers='keys', tablefmt='psql')
     return image_text
 
@@ -159,8 +158,9 @@ def format_image_text(weight, image_record):
 def build_plot(label, dendros_file, images_file, image_text):
     # Set up the plot and subplots.
     fig = plt.figure(figsize=(8.5, 11))
+    fig.tight_layout()
     # fig.suptitle("Image Label: " + label, fontsize=18, ha='left')
-    fig.subplots_adjust(bottom=0.1, left=0.025, top = 0.975, right=0.975)
+    # fig.subplots_adjust(bottom=0.1, left=0.025, top = 0.975, right=0.975)
 
     # Add facial expression image to a subplot.
     with cbook.get_sample_data(images_file) as image_file:
@@ -172,17 +172,18 @@ def build_plot(label, dendros_file, images_file, image_text):
 
     # # Add image text to a subplot.
     sub2 = plt.subplot(2, 2, 2)
+    fig.subplots_adjust(top=0.50)
     sub2.axis('off')
     sub2.text(0.1, 0.8,
             "Image Label: " + label, 
             fontsize=18,
             va='bottom',
             ha='left')
-    sub2.text(0.1, 0,
+    sub2.text(0.1, 0.8,
             image_text,
             fontsize = 10,
-            va='bottom',
-            ha='left    ')
+            va='top',
+            ha='left')
 
     # # Add dendrogram to a subplot.
     with cbook.get_sample_data(dendros_file) as dendro_file:
@@ -190,8 +191,8 @@ def build_plot(label, dendros_file, images_file, image_text):
     sub3 = fig.add_subplot(2, 2, (3, 4))
     sub3.axis('off')
     plt.imshow(dendro)
-
-    plt.subplots_adjust(bottom=0.1, top=1.0, right=0.95, left=0.01, wspace=0.1, hspace=0.1)
+    
+    plt.subplots_adjust(bottom=0.1, top=1.0, right=0.99, left=0.01, wspace=0, hspace=0)
     plt.show(block=False)
     plt.pause(1)
     plt.close()
