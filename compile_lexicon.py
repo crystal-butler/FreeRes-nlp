@@ -167,13 +167,13 @@ def format_image_text(weight, image_record):
 
 def format_labels_weights_text(labels_weights):
     """Pretty print layout for the text of the lexicon plot."""
-    labels_weights_text = '-----------------------------\n'
+    labels_weights_text = '---------------------------\n'
     labels_weights_text += ('Label Similarity Scores\n')
-    labels_weights_text += '-----------------------------\n'
+    labels_weights_text += '---------------------------\n'
     # image_text += 'Action Units and Weights\n\n'
     for i in range(0, len(labels_weights)):
-        labels_weights_text += '%s' % (str(labels_weights[i][0]))
-        # labels_weights_text += '%-6.6f' % (labels_weights[i][1])
+        labels_weights_text += '%-16s' % (str(labels_weights[i][0]))
+        labels_weights_text += '%10s' % (str(labels_weights[i][1]))
         labels_weights_text += '\n'
         # labels_weights_text += '%10s' % (str(image_record.values[i]))
         # labels_weights_text += '%10s' % (str(image_record.values[i + 1]))
@@ -226,13 +226,13 @@ def build_plot(label, dendros_file, images_file, image_text, labels_weights_text
     #         fontsize=12,
     #         va='bottom',
     #         ha='left')
-    sub3.text(0.1, 1.0,
+    sub3.text(0.5, 1.0,
             # image_text,
             labels_weights_text,
             fontsize = 8,
             fontfamily='monospace',
             va='top',
-            ha='left')
+            ha='center')
 
     # # Add dendrogram to a subplot.
     with cbook.get_sample_data(dendros_file) as dendro_file:
