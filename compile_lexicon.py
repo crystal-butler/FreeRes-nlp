@@ -1,7 +1,7 @@
 # Crystal Butler
 # 2020/08/28
 # Combine passing dendrograms and statistics created by cluster_synonymy_scores,
-# the top label and weight from sum_label_weights and AUs and weights
+# the labels and weights from sum_label_weights and AUs and weights
 # from a spreadsheet to create a lexicon of facial expressions.
 
 import os
