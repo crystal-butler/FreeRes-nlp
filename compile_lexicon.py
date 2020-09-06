@@ -148,9 +148,10 @@ def print_label_weight(label, weight):
 def format_image_text(weight, image_record):
     """Pretty print layout for the text of the lexicon plot."""
     image_text = '-------------------------------------------------\n\n'
-    image_text += ('Label Similarity Score: ' + str(weight) + '\n\n')
-    image_text += '-------------------------------------------------\n\n'
+    # image_text += ('Label Similarity Score: ' + str(weight) + '\n\n')
+    # image_text += '-------------------------------------------------\n\n'
     image_text += 'Action Units and Weights\n\n'
+    image_text += '-------------------------------------------------\n\n'
     for i in range(0, len(image_record), 2):
         image_text += '%10s' % (str(image_record.index[i]))
         image_text += '%10s' % (str(image_record.index[i + 1]))
@@ -165,24 +166,24 @@ def format_image_text(weight, image_record):
 
 def format_labels_weights_text(labels_weights):
     """Pretty print layout for the text of the lexicon plot."""
-    image_text = '-------------------------------------------------\n\n'
-    image_text += ('Label Similarity Score: ' + str(weight) + '\n\n')
-    image_text += '-------------------------------------------------\n\n'
-    image_text += 'Action Units and Weights\n\n'
-    for i in range(0, len(image_record), 2):
-        image_text += '%10s' % (str(image_record.index[i]))
-        image_text += '%10s' % (str(image_record.index[i + 1]))
-        image_text += '\n'
-        image_text += '%10s' % (str(image_record.values[i]))
-        image_text += '%10s' % (str(image_record.values[i + 1]))
-        image_text += '\n'    
-    image_text += '\n'
-    image_text += '-------------------------------------------------\n'
+    labels_weights_text = '-------------------------------------------------\n\n'
+    labels_weights_text += ('Label Similarity Scores\n\n')
+    labels_weights_text += '-------------------------------------------------\n\n'
+    # image_text += 'Action Units and Weights\n\n'
+    for i in range(0, len(labels_weights)):
+        labels_weights_text += '%10s' % (str(labels_weights[i][0]))
+        labels_weights_text += '%10s' % (str(ilabels_weights[i][1]))
+        labels_weights_text += '\n'
+        # labels_weights_text += '%10s' % (str(image_record.values[i]))
+        # labels_weights_text += '%10s' % (str(image_record.values[i + 1]))
+        # labels_weights_text += '\n'    
+    labels_weights_text += '\n'
+    labels_weights_text += '-------------------------------------------------\n'
     # image_text += tabulate(image_record, headers='keys', tablefmt='psql')
-    return image_text
+    return labels_weights_text
 
 
-def build_plot(label, dendros_file, images_file, image_text):
+def build_plot(label, dendros_file, images_file, image_text, labels_weights_text):
     # Set up the plot and subplots.
     fig = plt.figure(figsize=(8.5, 11))
     fig.tight_layout()
@@ -203,11 +204,11 @@ def build_plot(label, dendros_file, images_file, image_text):
     sub2.axis('off')
     sub2.text(0.1, 0.8,
             "Image Label: " + label, 
-            fontsize=18,
+            fontsize=14,
             va='bottom',
             ha='left')
     sub2.text(0.1, 0.8,
-            image_text,
+            labels_weights_text,
             fontsize = 10,
             va='top',
             ha='left')
@@ -216,11 +217,11 @@ def build_plot(label, dendros_file, images_file, image_text):
     sub3 = plt.subplot(2, 4, 4)
     fig.subplots_adjust(top=0.50)
     sub3.axis('off')
-    sub3.text(0.1, 0.8,
-            "Image Label: " + label, 
-            fontsize=18,
-            va='bottom',
-            ha='left')
+    # sub3.text(0.1, 0.8,
+    #         "Image Label: " + label, 
+    #         fontsize=18,
+    #         va='bottom',
+    #         ha='left')
     sub3.text(0.1, 0.8,
             image_text,
             fontsize = 10,
@@ -234,7 +235,7 @@ def build_plot(label, dendros_file, images_file, image_text):
     sub4.axis('off')
     plt.imshow(dendro)
     
-    plt.subplots_adjust(bottom=0.1, top=1.0, right=0.99, left=0.01, wspace=0, hspace=0)
+    plt.subplots_adjust(bottom=0.1, top=1.0, right=0.95, left=0.05, wspace=0, hspace=0)
     plt.show(block=False)
     plt.pause(1)
     plt.close()
@@ -283,8 +284,9 @@ if __name__ == '__main__':
             images_file = find_images_file(image_name, images_files)
             image_record = get_image_record(image_name, aus_weights_vals)
             image_text = format_image_text(labels_weights[0][1], image_record)
+            labels_weights_text = format_labels_weights_text(labels_weights)
             # print(image_text)
-            # build_plot(label, dendros_file, images_file, image_text)
+            build_plot(labels_weights[0][0], dendros_file, images_file, image_text, labels_weights_text)
             # print(tabulate(image_record, headers='keys', tablefmt='psql'))
             # print(image_record)
             # print_labels_weights(labels_weights)
