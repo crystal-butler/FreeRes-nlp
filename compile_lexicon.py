@@ -9,7 +9,7 @@ import sys
 import argparse
 import time
 import pandas as pd
-from tabulate import tabulate
+# from tabulate import tabulate
 import matplotlib.pyplot as plt
 from matplotlib.offsetbox import (TextArea, DrawingArea, OffsetImage, AnnotationBbox)
 import matplotlib.cbook as cbook
@@ -90,12 +90,21 @@ def find_labels_weights_file(image_name, labels_weights_files):
     print(f'uh-oh, image {image_name} not found in labels_weights_files list!')
 
 
-def get_label_weight(labels_weights_file):
+def get_labels_weights(labels_weights_file):
     with open(labels_weights_file, 'r') as f:
-        top = f.readline()
-        label, weight = top.split()
-        weight = round(float(weight), 6)
-        return label, weight
+        labels_weights = []
+        for line in f:
+            stripped_line = line.strip()
+            label, weight = stripped_line.split()
+            weight = round(float(weight), 6)
+            lw = [label, weight]
+            labels_weights.append(lw)
+        return labels_weights
+
+
+def print_labels_weights(labels_weights):
+    for lw in labels_weights:
+        print(lw)
 
 
 def find_images_file(image_name, images_files):
@@ -154,6 +163,24 @@ def format_image_text(weight, image_record):
     # image_text += tabulate(image_record, headers='keys', tablefmt='psql')
     return image_text
 
+def format_labelweight_text(weight, image_record):
+    """Pretty print layout for the text of the lexicon plot."""
+    image_text = '-------------------------------------------------\n\n'
+    image_text += ('Label Similarity Score: ' + str(weight) + '\n\n')
+    image_text += '-------------------------------------------------\n\n'
+    image_text += 'Action Units and Weights\n\n'
+    for i in range(0, len(image_record), 2):
+        image_text += '%10s' % (str(image_record.index[i]))
+        image_text += '%10s' % (str(image_record.index[i + 1]))
+        image_text += '\n'
+        image_text += '%10s' % (str(image_record.values[i]))
+        image_text += '%10s' % (str(image_record.values[i + 1]))
+        image_text += '\n'    
+    image_text += '\n'
+    image_text += '-------------------------------------------------\n'
+    # image_text += tabulate(image_record, headers='keys', tablefmt='psql')
+    return image_text
+
 
 def build_plot(label, dendros_file, images_file, image_text):
     # Set up the plot and subplots.
@@ -165,13 +192,13 @@ def build_plot(label, dendros_file, images_file, image_text):
     # Add facial expression image to a subplot.
     with cbook.get_sample_data(images_file) as image_file:
         image = plt.imread(image_file)
-    sub1 = fig.add_subplot(2, 2, 1)
+    sub1 = fig.add_subplot(2, 4, (1, 2))
     # fig.subplots_adjust(top=0.95)
     sub1.axis('off')
     plt.imshow(image)
 
-    # # Add image text to a subplot.
-    sub2 = plt.subplot(2, 2, 2)
+    # Add image text to a subplot.
+    sub2 = plt.subplot(2, 4, 3)
     fig.subplots_adjust(top=0.50)
     sub2.axis('off')
     sub2.text(0.1, 0.8,
@@ -185,11 +212,26 @@ def build_plot(label, dendros_file, images_file, image_text):
             va='top',
             ha='left')
 
+    # Add image text to a subplot.
+    sub3 = plt.subplot(2, 4, 4)
+    fig.subplots_adjust(top=0.50)
+    sub3.axis('off')
+    sub3.text(0.1, 0.8,
+            "Image Label: " + label, 
+            fontsize=18,
+            va='bottom',
+            ha='left')
+    sub3.text(0.1, 0.8,
+            image_text,
+            fontsize = 10,
+            va='top',
+            ha='left')
+
     # # Add dendrogram to a subplot.
     with cbook.get_sample_data(dendros_file) as dendro_file:
         dendro = plt.imread(dendro_file)
-    sub3 = fig.add_subplot(2, 2, (3, 4))
-    sub3.axis('off')
+    sub4 = fig.add_subplot(2, 4, (5, 8))
+    sub4.axis('off')
     plt.imshow(dendro)
     
     plt.subplots_adjust(bottom=0.1, top=1.0, right=0.99, left=0.01, wspace=0, hspace=0)
@@ -237,15 +279,25 @@ if __name__ == '__main__':
         for image_name in image_names:
             dendros_file = find_dendros_file(image_name, dendros_files)
             labels_weights_file = find_labels_weights_file(image_name, labels_weights_files)
-            label, weight = get_label_weight(labels_weights_file)
+            labels_weights = get_labels_weights(labels_weights_file)
             images_file = find_images_file(image_name, images_files)
             image_record = get_image_record(image_name, aus_weights_vals)
-            image_text = format_image_text( weight, image_record)
+            image_text = format_image_text(labels_weights[0][1], image_record)
             # print(image_text)
-            build_plot(label, dendros_file, images_file, image_text)
+            # build_plot(label, dendros_file, images_file, image_text)
             # print(tabulate(image_record, headers='keys', tablefmt='psql'))
             # print(image_record)
+            print_labels_weights(labels_weights)
 
     else:
-        print("Be sure to include options for the dendrogram directory, labels and weights directory, \
-            images directory, AUs and weights file and output directory when calling this module.")
+        if (not os.path.isdir(args.dendros_dir)):
+            print(f'Missing or incorrect argument for dendros_dir: tried {args.dendros_dir}.')
+        elif (not os.path.isdir(args.labels_weights_dir)):
+            print(f'Missing or incorrect argument for labels_weights_dir: tried {args.labels_weights_dir}.')
+        elif (not os.path.isdir(args.images_dir)):
+            print(f'Missing or incorrect argument for images_dir: tried {args.images_dir}.')
+        elif (not os.path.isfile(args.aus_weights)):
+            print(f'Missing or incorrect argument for aus_weights: tried {args.aus_weights}.')
+        else:
+            print("Be sure to include options for the dendrogram directory, labels and weights directory, \
+images directory, AUs and weights file and output directory when calling this module.")
