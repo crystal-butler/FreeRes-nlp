@@ -12,6 +12,7 @@ import pandas as pd
 # from tabulate import tabulate
 import matplotlib.pyplot as plt
 from matplotlib.offsetbox import (TextArea, DrawingArea, OffsetImage, AnnotationBbox)
+import matplotlib.gridspec as gridspec
 import matplotlib.cbook as cbook
 
 DENDRO_EXT = ".png"
@@ -147,11 +148,11 @@ def print_label_weight(label, weight):
 
 def format_image_text(weight, image_record):
     """Pretty print layout for the text of the lexicon plot."""
-    image_text = '---------------------------------------\n'
+    image_text = '-----------------------------\n'
     # image_text += ('Label Similarity Score: ' + str(weight) + '\n\n')
-    # image_text += '---------------------------------------\n\n'
-    image_text += 'Action Units and Weights\n\n'
-    image_text += '---------------------------------------\n'
+    # image_text += '----------------------------------\n\n'
+    image_text += 'Action Units and Weights\n'
+    image_text += '-----------------------------\n'
     for i in range(0, len(image_record), 2):
         image_text += '%10s' % (str(image_record.index[i]))
         image_text += '%10s' % (str(image_record.index[i + 1]))
@@ -160,15 +161,15 @@ def format_image_text(weight, image_record):
         image_text += '%10s' % (str(image_record.values[i + 1]))
         image_text += '\n'    
     image_text += '\n'
-    # image_text += '--------------------------------------------\n'
+    # image_text += '---------------------------------------\n'
     # image_text += tabulate(image_record, headers='keys', tablefmt='psql')
     return image_text
 
 def format_labels_weights_text(labels_weights):
     """Pretty print layout for the text of the lexicon plot."""
-    labels_weights_text = '---------------------------------------\n'
-    labels_weights_text += ('Label Similarity Scores\n\n')
-    labels_weights_text += '---------------------------------------\n'
+    labels_weights_text = '-----------------------------\n'
+    labels_weights_text += ('Label Similarity Scores\n')
+    labels_weights_text += '-----------------------------\n'
     # image_text += 'Action Units and Weights\n\n'
     for i in range(0, len(labels_weights)):
         labels_weights_text += '%s' % (str(labels_weights[i][0]))
@@ -178,7 +179,7 @@ def format_labels_weights_text(labels_weights):
         # labels_weights_text += '%10s' % (str(image_record.values[i + 1]))
         # labels_weights_text += '\n'    
     labels_weights_text += '\n'
-    # labels_weights_text += '---------------------------------------\n'
+    # labels_weights_text += '----------------------------------\n'
     # image_text += tabulate(image_record, headers='keys', tablefmt='psql')
     return labels_weights_text
 
@@ -189,54 +190,59 @@ def build_plot(label, dendros_file, images_file, image_text, labels_weights_text
     fig.tight_layout()
     # fig.suptitle("Image Label: " + label, fontsize=18, ha='left')
     # fig.subplots_adjust(bottom=0.1, left=0.025, top = 0.975, right=0.975)
+    plt.subplots_adjust(bottom=0.1, top=0.98, right=0.98, left=0.02, wspace=0, hspace=0)
 
     # Add facial expression image to a subplot.
     with cbook.get_sample_data(images_file) as image_file:
         image = plt.imread(image_file)
-    sub1 = fig.add_subplot(2, 4, (1, 2))
+    sub1 = fig.add_subplot(3, 2, 1)
     # fig.subplots_adjust(top=0.95)
     sub1.axis('off')
     plt.imshow(image)
 
     # Add image text to a subplot.
-    sub2 = plt.subplot(2, 4, 3)
-    fig.subplots_adjust(top=0.50)
+    sub2 = plt.subplot(3, 2, 3)
+    # fig.subplots_adjust(top=0.5)
     sub2.axis('off')
-    # sub2.text(0.1, 0.8,
-    #         "Image Label: " + label, 
-    #         fontsize=14,
-    #         va='bottom',
-    #         ha='left')
-    sub2.text(0.1, 0.8,
-            labels_weights_text,
+    sub2.text(0.5, 0.95,
+            "Image Label: " + label, 
+            fontsize=12,
+            va='top',
+            ha='center')
+    sub2.text(0.5, 0.9,
+            image_text,
+            # labels_weights_text,
             fontsize=8,
             fontfamily='monospace',
             va='top',
-            ha='right')
+            ha='center')
 
     # Add image text to a subplot.
-    sub3 = plt.subplot(2, 4, 4)
-    fig.subplots_adjust(top=0.50)
+    sub3 = plt.subplot(2, 2, 2)
+    # fig.subplots_adjust(top=0.5)
     sub3.axis('off')
-    sub3.text(0.1, 0.8,
-            "Image Label: " + label, 
-            fontsize=14,
-            va='bottom',
-            ha='right')
-    sub3.text(0.1, 0.8,
-            image_text,
-            fontsize = 10,
+    # sub3.text(0.1, 0.8,
+    #         "Image Label: " + label, 
+    #         fontsize=12,
+    #         va='bottom',
+    #         ha='left')
+    sub3.text(0.1, 1.0,
+            # image_text,
+            labels_weights_text,
+            fontsize = 8,
+            fontfamily='monospace',
             va='top',
             ha='left')
 
     # # Add dendrogram to a subplot.
     with cbook.get_sample_data(dendros_file) as dendro_file:
         dendro = plt.imread(dendro_file)
-    sub4 = fig.add_subplot(2, 4, (5, 8))
+    # fig.subplots_adjust(top=1.0)
+    sub4 = fig.add_subplot(2, 2, (3, 4))
     sub4.axis('off')
     plt.imshow(dendro)
     
-    plt.subplots_adjust(bottom=0.1, top=1.0, right=0.95, left=0.05, wspace=0, hspace=0)
+    
     plt.show(block=False)
     plt.pause(1)
     plt.close()
