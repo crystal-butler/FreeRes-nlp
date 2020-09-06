@@ -165,13 +165,28 @@ def build_plot(label, dendros_file, images_file, image_text):
     # Add facial expression image to a subplot.
     with cbook.get_sample_data(images_file) as image_file:
         image = plt.imread(image_file)
-    sub1 = fig.add_subplot(2, 2, 1)
+    sub1 = fig.add_subplot(2, 4, (1, 2)
     # fig.subplots_adjust(top=0.95)
     sub1.axis('off')
     plt.imshow(image)
 
-    # # Add image text to a subplot.
-    sub2 = plt.subplot(2, 2, 2)
+    # Add image text to a subplot.
+    sub2 = plt.subplot(2, 4, 3)
+    fig.subplots_adjust(top=0.50)
+    sub2.axis('off')
+    sub2.text(0.1, 0.8,
+            "Image Label: " + label, 
+            fontsize=18,
+            va='bottom',
+            ha='left')
+    sub2.text(0.1, 0.8,
+            image_text,
+            fontsize = 10,
+            va='top',
+            ha='left')
+
+    # Add image text to a subplot.
+    sub2 = plt.subplot(2, 4, 4)
     fig.subplots_adjust(top=0.50)
     sub2.axis('off')
     sub2.text(0.1, 0.8,
@@ -188,7 +203,7 @@ def build_plot(label, dendros_file, images_file, image_text):
     # # Add dendrogram to a subplot.
     with cbook.get_sample_data(dendros_file) as dendro_file:
         dendro = plt.imread(dendro_file)
-    sub3 = fig.add_subplot(2, 2, (3, 4))
+    sub3 = fig.add_subplot(2, 4, (5, 8))
     sub3.axis('off')
     plt.imshow(dendro)
     
