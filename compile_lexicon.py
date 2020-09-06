@@ -90,12 +90,21 @@ def find_labels_weights_file(image_name, labels_weights_files):
     print(f'uh-oh, image {image_name} not found in labels_weights_files list!')
 
 
-def get_label_weight(labels_weights_file):
+def get_labels_weights(labels_weights_file):
     with open(labels_weights_file, 'r') as f:
-        top = f.readline()
-        label, weight = top.split()
-        weight = round(float(weight), 6)
-        return label, weight
+        labels_weights = []
+        for line in f:
+            stripped_line = line.strip()
+            label, weight = stripped_line.split()
+            weight = round(float(weight), 6)
+            lw = [label, weight]
+            labels_weights.append(lw)
+        return labels_weights
+
+
+def print_labels_weights(labels_weights):
+    for lw in labels_weights:
+        print(lw)
 
 
 def find_images_file(image_name, images_files):
@@ -137,6 +146,24 @@ def print_label_weight(label, weight):
 
 
 def format_image_text(weight, image_record):
+    """Pretty print layout for the text of the lexicon plot."""
+    image_text = '-------------------------------------------------\n\n'
+    image_text += ('Label Similarity Score: ' + str(weight) + '\n\n')
+    image_text += '-------------------------------------------------\n\n'
+    image_text += 'Action Units and Weights\n\n'
+    for i in range(0, len(image_record), 2):
+        image_text += '%10s' % (str(image_record.index[i]))
+        image_text += '%10s' % (str(image_record.index[i + 1]))
+        image_text += '\n'
+        image_text += '%10s' % (str(image_record.values[i]))
+        image_text += '%10s' % (str(image_record.values[i + 1]))
+        image_text += '\n'    
+    image_text += '\n'
+    image_text += '-------------------------------------------------\n'
+    # image_text += tabulate(image_record, headers='keys', tablefmt='psql')
+    return image_text
+
+    def format_labelweight_text(weight, image_record):
     """Pretty print layout for the text of the lexicon plot."""
     image_text = '-------------------------------------------------\n\n'
     image_text += ('Label Similarity Score: ' + str(weight) + '\n\n')
