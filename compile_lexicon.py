@@ -103,7 +103,8 @@ def get_labels_weights(labels_weights_file):
 
 def print_labels_weights(labels_weights):
     for lw in labels_weights:
-        print(lw)
+        print(lw[0])
+        print(lw[1])
 
 
 def find_images_file(image_name, images_files):
@@ -120,10 +121,10 @@ def get_image_record(image_name, aus_weights_vals):
 
 def print_image_record(image_record):
     for i in range(len(image_record)):
-        print('{:>10}'.format(image_record.index[i]), end='')
+        print('{:>15}'.format(image_record.index[i]), end='')
     print()
     for i in range(len(image_record)):
-        print('{:>10}'.format(image_record.values[i]), end='')
+        print('{:>15}'.format(str(image_record.values[i])), end='')
     print('\n')
 
 
@@ -148,13 +149,12 @@ def format_image_text(weight, image_record):
     image_text = '-----------------------------\n'
     image_text += 'Action Units and Weights\n'
     image_text += '-----------------------------\n'
-    image_text += '%-4s' % ('AU')
+    image_text += '%-6s' % ('AU')
     image_text += '%10s' % ('Weight\n')
     for i in range(0, len(image_record), 2):
-        image_text += '%-4s' % (str(image_record.values[i]))
+        image_text += '%-6s' % (str(image_record.values[i].strip()))
         image_text += '%10s' % (str(image_record.values[i + 1]))
-        image_text += '\n'    
-    image_text += '\n'
+        image_text += '\n'
     return image_text
 
 def format_labels_weights_text(labels_weights):
@@ -266,6 +266,8 @@ if __name__ == '__main__':
             image_text = format_image_text(labels_weights[0][1], image_record)
             labels_weights_text = format_labels_weights_text(labels_weights)
             build_plot(labels_weights[0][0], dendros_file, images_file, image_text, labels_weights_text)
+            # print_labels_weights(labels_weights)
+            # print_image_record(image_record)
 
     else:
         if (not os.path.isdir(args.dendros_dir)):
