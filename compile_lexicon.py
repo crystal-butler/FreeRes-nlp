@@ -28,8 +28,11 @@ args = parser.parse_args()
 
 
 def make_output_dir():
-    if not os.path.exists(args.lexicon_dir):
-        os.makedirs(args.lexicon_dir)
+    try:
+        if not os.path.exists(args.lexicon_dir):
+            os.makedirs(args.lexicon_dir)
+    except:
+        print(f'Couldn\'t make the output directory at {args.lexicon_dir}!')
 
 
 def make_input_lists():
@@ -170,11 +173,11 @@ def format_labels_weights_text(labels_weights):
     return labels_weights_text
 
 
-def build_plot(label, dendros_file, images_file, image_text, labels_weights_text):
+def build_plot(image_name, label, dendros_file, images_file, image_text, labels_weights_text):
     # Set up the plot and subplots.
     fig = plt.figure(figsize=(8.5, 11))
     fig.tight_layout()
-    plt.subplots_adjust(bottom=0.1, top=0.98, right=0.98, left=0.02, wspace=0, hspace=0)
+    plt.subplots_adjust(bottom=0.05, top=0.95, right=0.95, left=0.05, wspace=0, hspace=0)
 
     # Add facial expression image to a subplot.
     with cbook.get_sample_data(images_file) as image_file:
@@ -198,7 +201,7 @@ def build_plot(label, dendros_file, images_file, image_text, labels_weights_text
             va='top',
             ha='center')
 
-    # Add image text to a subplot.
+    # Add labels and weights text to a subplot.
     sub3 = plt.subplot(3, 3, 3)
     sub3.axis('off')
     sub3.text(0.5, 1.0,
@@ -215,35 +218,22 @@ def build_plot(label, dendros_file, images_file, image_text, labels_weights_text
     sub4.axis('off')
     plt.imshow(dendro)
     
+    # Save out the plot.
+    plot_file = make_output_filename(image_name)
+    try:
+        plt.savefig(plot_file, format='png')
+    except:
+        print(f'Unable to save {plot_file}!')
     
     plt.show(block=False)
     plt.pause(1)
     plt.close()
 
 
-def save_lexicon_entry(plot):
-        #     # Save out the plot and statistics.
-        #     dendro_file, stats_file = make_output_filenames(pct, dendro_name)
-        #     with open(stats_file, 'w') as f_stat:
-        #         f_stat.write(stats_printout)
-        #     try:
-        #         plt.savefig(dendro_file, format='png')
-        #     except:
-        #         print(f'Unable to save {dendro_file}!')
-    plt.show(block=False)
-    plt.pause(1)
-    plt.close()
-
-
-# def make_output_filenames(pct, dendro_name):
-#     """Write statistics and dendrograms to Pass or Fail directories based on the clustering coherence test."""
-#     if pct >= 75:
-#         dendro_file = os.path.join(args.clustering_dir, 'Dendrograms/Pass/' + dendro_name + '.png')
-#         stats_file = os.path.join(args.clustering_dir, 'Statistics/Pass/' + dendro_name + '.txt')
-#     else:
-#         dendro_file = os.path.join(args.clustering_dir, 'Dendrograms/Fail/' + dendro_name + '.png')
-#         stats_file = os.path.join(args.clustering_dir, 'Statistics/Fail/' + dendro_name + '.txt')
-#     return dendro_file, stats_file
+def make_output_filename(image_name):
+    """Name a plot file based on the facial expression image it displays."""
+    plot_file = os.path.join(args.lexicon_dir, image_name + '.png')
+    return plot_file
 
 
 if __name__ == '__main__':
@@ -265,9 +255,7 @@ if __name__ == '__main__':
             image_record = get_image_record(image_name, aus_weights_vals)
             image_text = format_image_text(labels_weights[0][1], image_record)
             labels_weights_text = format_labels_weights_text(labels_weights)
-            build_plot(labels_weights[0][0], dendros_file, images_file, image_text, labels_weights_text)
-            # print_labels_weights(labels_weights)
-            # print_image_record(image_record)
+            build_plot(image_name, labels_weights[0][0], dendros_file, images_file, image_text, labels_weights_text)
 
     else:
         if (not os.path.isdir(args.dendros_dir)):
