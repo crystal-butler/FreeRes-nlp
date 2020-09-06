@@ -28,8 +28,11 @@ args = parser.parse_args()
 
 
 def make_output_dir():
-    if not os.path.exists(args.lexicon_dir):
-        os.makedirs(args.lexicon_dir)
+    try:
+        if not os.path.exists(args.lexicon_dir):
+            os.makedirs(args.lexicon_dir)
+    except:
+        print(f'Couldn\'t make the output directory at {args.lexicon_dir}!')
 
 
 def make_input_lists():
@@ -174,7 +177,7 @@ def build_plot(image_name, label, dendros_file, images_file, image_text, labels_
     # Set up the plot and subplots.
     fig = plt.figure(figsize=(8.5, 11))
     fig.tight_layout()
-    plt.subplots_adjust(bottom=0.1, top=0.98, right=0.98, left=0.02, wspace=0, hspace=0)
+    plt.subplots_adjust(bottom=0.05, top=0.95, right=0.95, left=0.05, wspace=0, hspace=0)
 
     # Add facial expression image to a subplot.
     with cbook.get_sample_data(images_file) as image_file:
@@ -227,16 +230,9 @@ def build_plot(image_name, label, dendros_file, images_file, image_text, labels_
     plt.close()
 
 
-def save_lexicon_entry(plot):
-            
-    plt.show(block=False)
-    plt.pause(1)
-    plt.close()
-
-
 def make_output_filename(image_name):
     """Name a plot file based on the facial expression image it displays."""
-    plot_file = os.path.join(args.lexicon_dir, '/' + image_name + '.png')
+    plot_file = os.path.join(args.lexicon_dir, image_name + '.png')
     return plot_file
 
 
@@ -260,8 +256,6 @@ if __name__ == '__main__':
             image_text = format_image_text(labels_weights[0][1], image_record)
             labels_weights_text = format_labels_weights_text(labels_weights)
             build_plot(image_name, labels_weights[0][0], dendros_file, images_file, image_text, labels_weights_text)
-            # print_labels_weights(labels_weights)
-            # print_image_record(image_record)
 
     else:
         if (not os.path.isdir(args.dendros_dir)):
