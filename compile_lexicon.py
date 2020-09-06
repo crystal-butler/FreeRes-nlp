@@ -163,7 +163,7 @@ def format_image_text(weight, image_record):
     # image_text += tabulate(image_record, headers='keys', tablefmt='psql')
     return image_text
 
-    def format_labelweight_text(weight, image_record):
+def format_labelweight_text(weight, image_record):
     """Pretty print layout for the text of the lexicon plot."""
     image_text = '-------------------------------------------------\n\n'
     image_text += ('Label Similarity Score: ' + str(weight) + '\n\n')
@@ -279,14 +279,15 @@ if __name__ == '__main__':
         for image_name in image_names:
             dendros_file = find_dendros_file(image_name, dendros_files)
             labels_weights_file = find_labels_weights_file(image_name, labels_weights_files)
-            label, weight = get_label_weight(labels_weights_file)
+            labels_weights = get_labels_weights(labels_weights_file)
             images_file = find_images_file(image_name, images_files)
             image_record = get_image_record(image_name, aus_weights_vals)
-            image_text = format_image_text( weight, image_record)
+            image_text = format_image_text(labels_weights[0][1], image_record)
             # print(image_text)
-            build_plot(label, dendros_file, images_file, image_text)
+            # build_plot(label, dendros_file, images_file, image_text)
             # print(tabulate(image_record, headers='keys', tablefmt='psql'))
             # print(image_record)
+            print_labels_weights(labels_weights)
 
     else:
         if (not os.path.isdir(args.dendros_dir)):
