@@ -9,7 +9,7 @@ import sys
 import argparse
 import time
 import pandas as pd
-from tabulate import tabulate
+# from tabulate import tabulate
 import matplotlib.pyplot as plt
 from matplotlib.offsetbox import (TextArea, DrawingArea, OffsetImage, AnnotationBbox)
 import matplotlib.cbook as cbook
@@ -165,7 +165,7 @@ def build_plot(label, dendros_file, images_file, image_text):
     # Add facial expression image to a subplot.
     with cbook.get_sample_data(images_file) as image_file:
         image = plt.imread(image_file)
-    sub1 = fig.add_subplot(2, 4, (1, 2)
+    sub1 = fig.add_subplot(2, 4, (1, 2))
     # fig.subplots_adjust(top=0.95)
     sub1.axis('off')
     plt.imshow(image)
@@ -186,15 +186,15 @@ def build_plot(label, dendros_file, images_file, image_text):
             ha='left')
 
     # Add image text to a subplot.
-    sub2 = plt.subplot(2, 4, 4)
+    sub3 = plt.subplot(2, 4, 4)
     fig.subplots_adjust(top=0.50)
-    sub2.axis('off')
-    sub2.text(0.1, 0.8,
+    sub3.axis('off')
+    sub3.text(0.1, 0.8,
             "Image Label: " + label, 
             fontsize=18,
             va='bottom',
             ha='left')
-    sub2.text(0.1, 0.8,
+    sub3.text(0.1, 0.8,
             image_text,
             fontsize = 10,
             va='top',
@@ -203,8 +203,8 @@ def build_plot(label, dendros_file, images_file, image_text):
     # # Add dendrogram to a subplot.
     with cbook.get_sample_data(dendros_file) as dendro_file:
         dendro = plt.imread(dendro_file)
-    sub3 = fig.add_subplot(2, 4, (5, 8))
-    sub3.axis('off')
+    sub4 = fig.add_subplot(2, 4, (5, 8))
+    sub4.axis('off')
     plt.imshow(dendro)
     
     plt.subplots_adjust(bottom=0.1, top=1.0, right=0.99, left=0.01, wspace=0, hspace=0)
@@ -262,5 +262,14 @@ if __name__ == '__main__':
             # print(image_record)
 
     else:
-        print("Be sure to include options for the dendrogram directory, labels and weights directory, \
-            images directory, AUs and weights file and output directory when calling this module.")
+        if (not os.path.isdir(args.dendros_dir)):
+            print(f'Missing or incorrect argument for dendros_dir: tried {args.dendros_dir}.')
+        elif (not os.path.isdir(args.labels_weights_dir)):
+            print(f'Missing or incorrect argument for labels_weights_dir: tried {args.labels_weights_dir}.')
+        elif (not os.path.isdir(args.images_dir)):
+            print(f'Missing or incorrect argument for images_dir: tried {args.images_dir}.')
+        elif (not os.path.isfile(args.aus_weights)):
+            print(f'Missing or incorrect argument for aus_weights: tried {args.aus_weights}.')
+        else:
+            print("Be sure to include options for the dendrogram directory, labels and weights directory, \
+images directory, AUs and weights file and output directory when calling this module.")
