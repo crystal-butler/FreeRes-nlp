@@ -153,11 +153,13 @@ def format_image_text(weight, image_record):
     # image_text += '----------------------------------\n\n'
     image_text += 'Action Units and Weights\n'
     image_text += '-----------------------------\n'
+    image_text += '%-4s' % ('AU')
+    image_text += '%10s' % ('Weight\n')
     for i in range(0, len(image_record), 2):
-        image_text += '%10s' % (str(image_record.index[i]))
-        image_text += '%10s' % (str(image_record.index[i + 1]))
-        image_text += '\n'
-        image_text += '%10s' % (str(image_record.values[i]))
+        # image_text += '%10s' % (str(image_record.index[i]))
+        # image_text += '%10s' % (str(image_record.index[i + 1]))
+        # image_text += '\n'
+        image_text += '%-4s' % (str(image_record.values[i]))
         image_text += '%10s' % (str(image_record.values[i + 1]))
         image_text += '\n'    
     image_text += '\n'
@@ -195,13 +197,13 @@ def build_plot(label, dendros_file, images_file, image_text, labels_weights_text
     # Add facial expression image to a subplot.
     with cbook.get_sample_data(images_file) as image_file:
         image = plt.imread(image_file)
-    sub1 = fig.add_subplot(3, 2, 1)
+    sub1 = fig.add_subplot(3, 3, (1,2))
     # fig.subplots_adjust(top=0.95)
     sub1.axis('off')
     plt.imshow(image)
 
     # Add image text to a subplot.
-    sub2 = plt.subplot(3, 2, 3)
+    sub2 = plt.subplot(3, 3, (4, 5))
     # fig.subplots_adjust(top=0.5)
     sub2.axis('off')
     sub2.text(0.5, 0.95,
@@ -218,7 +220,7 @@ def build_plot(label, dendros_file, images_file, image_text, labels_weights_text
             ha='center')
 
     # Add image text to a subplot.
-    sub3 = plt.subplot(2, 2, 2)
+    sub3 = plt.subplot(3, 3, 3)
     # fig.subplots_adjust(top=0.5)
     sub3.axis('off')
     # sub3.text(0.1, 0.8,
@@ -238,7 +240,7 @@ def build_plot(label, dendros_file, images_file, image_text, labels_weights_text
     with cbook.get_sample_data(dendros_file) as dendro_file:
         dendro = plt.imread(dendro_file)
     # fig.subplots_adjust(top=1.0)
-    sub4 = fig.add_subplot(2, 2, (3, 4))
+    sub4 = fig.add_subplot(2, 1, 2)
     sub4.axis('off')
     plt.imshow(dendro)
     
