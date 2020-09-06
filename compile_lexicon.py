@@ -14,9 +14,10 @@ from matplotlib.offsetbox import (TextArea, DrawingArea, OffsetImage, Annotation
 import matplotlib.gridspec as gridspec
 import matplotlib.cbook as cbook
 
+# Modify these file extensions to match the expected input types.
 DENDRO_EXT = ".png"
 WEIGHTS_EXT = ".weights.txt"
-IMAGE_EXT = ".jpg"
+IMAGE_EXT = ".png"
 
 parser = argparse.ArgumentParser()
 parser.add_argument('dendros_dir', help='full path to a directory containing dendrograms that passed the clustering test', type=str)
@@ -225,8 +226,10 @@ def build_plot(image_name, label, dendros_file, images_file, image_text, labels_
     except:
         print(f'Unable to save {plot_file}!')
     
-    plt.show(block=False)
-    plt.pause(1)
+    # Uncomment the following 2 lines to display the plots as they're generated.
+    # plt.show(block=False)
+    # plt.pause(1)
+
     plt.close()
 
 
