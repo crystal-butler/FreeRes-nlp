@@ -137,13 +137,13 @@ def format_cluster_stats(cophenetic_coefficient, cluster_membership, pct):
 
 def classify_pass_fail(pct):
     """The clustering coherence test is based on membership percentage in the largest cluster."""
-    pass_fail = 'pass' if pct >= 75 else 'fail'
+    pass_fail = 'pass' if pct >= 66 else 'fail'
     return pass_fail
 
 
 def make_output_filenames(pct, dendro_name):
     """Write statistics and dendrograms to Pass or Fail directories based on the clustering coherence test."""
-    if pct >= 75:
+    if pct >= 66:
         dendro_file = os.path.join(args.clustering_dir, 'Dendrograms/Pass/' + dendro_name + '.png')
         stats_file = os.path.join(args.clustering_dir, 'Statistics/Pass/' + dendro_name + '.txt')
     else:
