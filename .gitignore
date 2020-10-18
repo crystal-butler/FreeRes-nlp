@@ -4,3 +4,5 @@ data/
 __pycache__/
 sample_distribution.py
 visualize_distribution.py
+compare_distributions.py
+compile_lexicon.py
