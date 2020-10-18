@@ -137,7 +137,7 @@ def format_cluster_stats(cophenetic_coefficient, cluster_membership, pct):
 
 def classify_pass_fail(pct):
     """The clustering coherence test is based on membership percentage in the largest cluster."""
-    pass_fail = 'pass' if pct >= 66 else 'fail'
+    pass_fail = 'pass' if pct >= 75 else 'fail'
     return pass_fail
 
 
