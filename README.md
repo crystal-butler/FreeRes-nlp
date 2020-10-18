@@ -18,13 +18,13 @@ described in detail here.
 
 *Word Embeddings*
 The word embeddings included in this repo can be used to calculate semantic similarity between labels. They were developed through extensive testing of a variety of 
-off-the-shelf NLP models with a final retrofitting step applied using a custom dictionary and thesaurus corpus. They outperformed all other models on a facial expression
+off-the-shelf NLP models, with the best performing model fine-tuned using [retrofitting](https://www.cs.cmu.edu/~hovy/papers/15HLT-retrofitting-word-vectors.pdf) with a custom dictionary and thesaurus corpus (not provided here), then [counter-fit](https://www.aclweb.org/anthology/N16-1018.pdf). The resulting word embeddings outperformed all other models on a facial expression
 label synonymy scoring task, and can be found in the word_embeddings directory.
 
 *Synonymy Scoring Task*
-This pipeline was originally developed to analyze sets of free response facial expression labels. To test the quality of word embeddings for this purpose, a curated benchmark 
+This pipeline was developed to analyze sets of free response facial expression labels. To test the quality of word embeddings for this purpose, a curated benchmark 
 test set of facial expression label pairs was scored for synonymy by crowdsourced human raters. The label pairs, averaged synonymy scores and benchmark vocabulary are included
-in the synonymy_scoring_task directory. Word embeddings can model semantic relatedness, but are not specific enough to capture only the synonymy relationship between words, which
+in the synonyms_dataset directory. Word embeddings can model semantic relatedness, but are not specific enough to capture only the synonymy relationship between words, which
 is required to determine whether labels relate to a central semantic concept. To assess the comparitive quality of word embeddings for capturing synonymy values, calculate
 inter-rater reliability between the model and human raters with a test statistic such as 
 [Krippendorff's alpha](https://repository.upenn.edu/cgi/viewcontent.cgi?article=1043&context=asc_papers#:~:text=Krippendorff's%20alpha%20(%CE%B1)%20is%20a,assign%20computable%20values%20to%20them.).
@@ -43,3 +43,6 @@ including any default values, execute `python <script_name>.py --help`, substitu
 2. word_pair_distance.py: calculate the cosine similarity scores for one or more files of word pairs generted by create_all_pairs.py
 3. cluster_synonymy_scores.py: cluster label sets based on relatedness scores from word_pair_distance.py, and test for cluster coherence
 4. sum_label_weights.py: find the cumulative relatedness scores for all labels in one or more lists output by word_pair_distance.py
+
+## Getting the word embeddings
+The FreeRes-NLP word embeddings are stored in compressed format in the word_embeddings directory using [Git Large File Storage](https://git-lfs.github.com/). If you want to clone the repository and include the word embeddings, you will need to install git lfs--see info here on [versioning large files](https://docs.github.com/en/free-pro-team@latest/github/managing-large-files/versioning-large-files). Alternately, you can [download the file from GitHub directly](https://github.com/crystal-butler/FreeRes-nlp/raw/master/word_embeddings/FreeRes-NLP_word_embeddings.zip).
