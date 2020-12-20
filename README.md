@@ -1,5 +1,5 @@
 # FreeRes-nlp
-A pipeline for analyzing single word free response label sets.
+A pipeline for analyzing single word free response label sets. More information can be found in the 2020 Intelligent Virtual Agents conference paper [here](https://www.crystal-butler.com/?p=1533).
 
 ## Contents of the repository
 Most of the files in this repo are scripts that can be pipelined to analyze the semantics of a list of single word labels. The pipeline determine whether the terms in the
